@@ -9,3 +9,10 @@ about:
     defaults: { _controller: "BloggerBlogBundle:Page:about" }
     requirements:
          methods:  GET
+
+show:
+    path:  /{id}
+    defaults: { _controller: "BloggerBlogBundle:Post:show" }
+    requirements:
+        methods:  GET
+        id: \d+
