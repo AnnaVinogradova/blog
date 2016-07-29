@@ -1,6 +1,35 @@
-
 {% extends 'BloggerBlogBundle::layout.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/bloggerblog/css/post.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
 {% block body %}
-    homepage content
+<h3> All published posts </h3>
+<ul  id="content">
+    {% for post in posts %}
+        <li class="row single-post">
+        	<article class="post">
+        	    <header>
+        	        <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
+        	    </header>
+        	
+        	    <img src="{{ asset(['images/', post.image]|join) }}" />
+        	    <div>
+        	        <p>{{ post.content(500) }}</p>
+        	        <p class="continue"><a href="{{ path('show', { 'id': post.id }) }}">Continue reading...</a></p>
+        	    </div>
+        	
+        	    <div class="meta">
+        	        <p>Posted by <span class="highlight">{{post.author}}</span> at {{ post.created|date('h:iA') }}</p>
+        	    </div>
+                <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
+        	</article>
+        </li>
+
+    {% else %}
+        <p>There are no fosts</p>
+    {% endfor %}
+<ul>
 {% endblock %}

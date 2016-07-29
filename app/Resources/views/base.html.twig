@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,29 +21,25 @@
                       <span class="icon-bar"></span>
                       <span class="icon-bar"></span>
                     </button>
+                    <header>
+                        {% block blog_title %}<a href="{{ path('homepage') }}" class="navbar-brand">Blog</a>{% endblock %}
+                    </header>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-collapse">
                     <ul class="row nav navbar-nav">
-                        <li><a href="{{ path('homepage') }}">Home</a></li>
-                        <li><a href="#">Login</a></li>
+                        <li><a href="{{ path('homepage') }}">All posts</a></li>
                         <li><a href="{{ path('about') }}">About</a></li>
+                        <li><a href="{{ path('all_posts') }}">Home</a></li>    
                     </ul>
                 </div>
             </div>
         </nav>
     {% endblock %}
-        <header>
-            <h2>{% block blog_title %}<a href="#">Blog</a>{% endblock %}</h2>
-        </header>
 
     <div class="row">
-        <section class="col-sm-8">
+        <section class="col-sm-11">
             {% block body %}{% endblock %}
         </section>
-        
-        <aside class="col-sm-4">
-            {% block sidebar %}{% endblock %}
-        </aside>
     </div>
 
     <footer>

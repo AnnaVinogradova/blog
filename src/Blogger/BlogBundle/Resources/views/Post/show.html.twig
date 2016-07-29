@@ -8,14 +8,17 @@
 {% endblock %}
 
 {% block body %}
-    <article class="post">
+    <article class="post" id="content">
         <header>
-            <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
             <h2>{{ post.title }}</h2>
         </header>
         <img src="{{ asset(['images/', post.image]|join) }}" alt="{{ post.title }} image not found" class="large" />
         <div>
             <p>{{ post.content }}</p>
         </div>
+        <div class="meta">
+            <p>Posted by <span class="highlight">{{post.author}}</span> at {{ post.created|date('h:iA') }}</p>
+        </div>
+        <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
     </article>
 {% endblock %}

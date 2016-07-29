@@ -1,9 +1,6 @@
-.date { 
-	margin-bottom: 20px; 
-	border-bottom: 1px solid #ccc; 
-	font-size: 24px; 
-	color: #666; 
-	line-height: 30px 
+
+article {
+	margin-left: 20px;
 }
 
 .post { 
@@ -15,10 +12,34 @@
 		float: left; 
 		padding: 5px; 
 		border: 1px solid #ccc; 
-		margin: 0 10px 10px 0; 
+		margin: 0 20px 10px 0; 
+		box-shadow: 2px 2px 5px #000;
 	}
 
-.post img.large { 
-	width: 300px; 
-	min-height: 165px; 
+		.post img.large { 
+			width: 80%; 
+			min-height: 165px; 
+			margin: 20px 10%;
+			padding: 0;
+		}
+
+.continue {
+	font-style: italic;
+	text-align: center;
 }
+
+.meta, .date {
+	font-style: italic;
+	text-align: right;
+}
+
+.single-post ul {
+	text-align: right;
+}
+
+	.single-post li {
+		display: inline-block;
+		text-decoration: underline;
+		color: #00f;
+		font-style: italic;
+	}

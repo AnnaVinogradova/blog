@@ -10,4 +10,16 @@ namespace Blogger\BlogBundle\Repository;
  */
 class PostRepository extends \Doctrine\ORM\EntityRepository
 {
+	public function getLatestPosts($limit = null)
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('p')
+            ->addOrderBy('p.created', 'DESC');
+
+        if (false === is_null($limit))
+            $qb->setMaxResults($limit);
+
+        return $qb->getQuery()
+            ->getResult();
+    }
 }

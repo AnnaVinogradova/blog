@@ -1,3 +1,7 @@
+blogger_blog_post:
+    resource: "@BloggerBlogBundle/Resources/config/routing/post.yml"
+    prefix:   /post
+
 homepage:
     path:     /
     defaults: { _controller: "BloggerBlogBundle:Page:index" }
@@ -11,8 +15,14 @@ about:
          methods:  GET
 
 show:
-    path:  /{id}
-    defaults: { _controller: "BloggerBlogBundle:Post:show" }
+    path:  /posts/{id}
+    defaults: { _controller: "BloggerBlogBundle:Post:view" }
     requirements:
         methods:  GET
         id: \d+
+
+all_posts:
+    path:  /post
+    defaults: { _controller: "BloggerBlogBundle:Post:index" }
+    requirements:
+        methods:  GET

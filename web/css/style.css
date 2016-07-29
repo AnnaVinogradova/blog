@@ -1,6 +1,11 @@
+
 html {
     position: relative;
     min-height: 100%;
+}
+
+body {
+    margin-bottom: 100px;
 }
 
 footer {
@@ -15,3 +20,61 @@ footer {
     background: #000;
     color: #fff;
 }
+
+h3 {
+    margin-bottom: 20px; 
+    border-bottom: 1px solid #ccc; 
+    font-size: 24px; 
+    color: #666; 
+    line-height: 30px 
+}
+
+li {
+    list-style-type: none;
+}
+
+#content {
+    padding: 30px;
+    margin-left: 20px;
+    background: #EEEDE3;
+}
+
+.navbar-inverse {
+    background: #222;
+    border-radius: 0;
+}
+
+.navbar-brand {
+    text-transform: uppercase;
+    color: #fff;
+    font-style: italic;
+    text-shadow: 2px 1px 1px #fff;
+}
+
+.edit-form input, .edit-form textarea {
+    display: block;
+    border-radius: 15px;
+    margin: 10px;
+    padding: 10px;
+}
+
+.edit-form textarea {
+    width: 80%;
+    height: 250px;
+}
+
+.edit-form [type="submit"] {
+    width: 150px;
+    border-radius: 5px;
+    background: #000;
+    color: #fff;
+}
+
+.single-post {
+    margin: 20px 0; 
+    border-bottom: 1px solid #ccc; 
+}
+
+    li.single-post {
+        list-style-type: none;
+    }
