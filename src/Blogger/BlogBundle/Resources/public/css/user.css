@@ -1,0 +1,10 @@
+ul.user-list>li {
+	margin-bottom: 20px; 
+	border-bottom: 1px solid #ccc;
+}
+
+ul.inner-menu li {
+	display: inline-block;
+	text-decoration: underline;
+	margin: 5px;
+}

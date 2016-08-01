@@ -30,7 +30,7 @@ class PostController extends Controller
                 array('created' => 'DESC'));
 
             $myPosts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
-                array('author' => $user), 
+                array('user' => $user), 
                 array('created' => 'DESC'));
 
             return $this->render('post/index.html.twig', array(
@@ -40,7 +40,7 @@ class PostController extends Controller
             
         } else {    
             $posts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
-                array('author' => $user), 
+                array('user' => $user), 
                 array('created' => 'DESC'));
         
         return $this->render('post/index.html.twig', array(
@@ -200,7 +200,7 @@ class PostController extends Controller
 
         return  $em->getRepository('BloggerBlogBundle:Post')->findBy( 
                 array('id' => $id,
-                'author' => $user)
+                'user' => $user)
                 );
     }
 

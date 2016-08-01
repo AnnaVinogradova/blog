@@ -44,10 +44,10 @@ class Post
 
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="post", cascade={"persist"})
-     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="cascade")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="cascade")
      * @var Blogger\BlogBundle\Entity\User
      */
-    protected $author;
+    protected $user;
 
     /**
      * @var \DateTime
@@ -155,7 +155,7 @@ class Post
      */
     public function setAuthor($author)
     {
-        $this->author = $author;
+        $this->user = $author;
 
         return $this;
     }
@@ -167,7 +167,7 @@ class Post
      */
     public function getAuthor()
     {
-        return $this->author;
+        return $this->user;
     }
 
     /**

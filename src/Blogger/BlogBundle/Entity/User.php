@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="fos_user")
+ * @ORM\Table(name="user")
  */
 class User extends BaseUser
 {
@@ -19,7 +19,7 @@ class User extends BaseUser
     protected $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="Post", mappedBy="fos_user", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Post", mappedBy="user", cascade={"persist", "remove"})
      */
     protected $posts;
 
