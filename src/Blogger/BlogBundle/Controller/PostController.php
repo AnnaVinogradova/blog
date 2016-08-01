@@ -20,11 +20,15 @@ class PostController extends Controller
      */
     public function indexAction()
     {
-        $user = $this->container->get('security.context')->getToken()->getUser();
-
+        $securityContext = $this->container->get('security.context');
         $em = $this->getDoctrine()->getManager();
 
-        $posts = $em->getRepository('BloggerBlogBundle:Post')->findByAuthor($user->getUsername());
+        if($securityContext->isGranted('ROLE_ADMIN')){
+            $posts = $em->getRepository('BloggerBlogBundle:Post')->findAll();
+        } else {
+            $user = $securityContext->getToken()->getUser();
+            $posts = $em->getRepository('BloggerBlogBundle:Post')->findByAuthor($user->getUsername());
+        }
 
         return $this->render('post/index.html.twig', array(
             'posts' => $posts,
@@ -43,7 +47,11 @@ class PostController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($post);
+
+            $user = $this->container->get('security.context')->getToken()->getUser();
+            $user->addPost($post);
+
+            //$em->persist($post);
             $em->flush();
 
             return $this->redirectToRoute('post_show', array('id' => $post->getId()));

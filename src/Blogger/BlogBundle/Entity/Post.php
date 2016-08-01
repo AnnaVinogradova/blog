@@ -43,11 +43,11 @@ class Post
     private $image;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="author", type="string", length=50)
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="post", cascade={"persist"})
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id", onDelete="cascade")
+     * @var Blogger\BlogBundle\Entity\User
      */
-    private $author;
+    protected $author;
 
     /**
      * @var \DateTime

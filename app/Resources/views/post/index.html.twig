@@ -7,35 +7,37 @@
 
 {% block body %}
     <h3>Your posts</h3>
-    <ul>
-        <li>
-            <a href="{{ path('post_new') }}">Create a new post</a>
-        </li>
-    </ul>
-    <ul class="container" id="content">
-        {% for post in posts %}
-            <li class="row single-post">
-                <article class="post">
-                    <header>
-                        <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
-                    </header>
-                
-                    <img src="{{ asset(['images/', post.image]|join) }}" />
-                    <div>
-                        <p>{{ post.content(500) }}</p>
-                    </div>
-                
-                    <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
-                </article>
-                <ul>
-                    <li>
-                        <a href="{{ path('post_show', { 'id': post.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('post_edit', { 'id': post.id }) }}">edit</a>
-                    </li>
-                </ul>
+    <div id="content" class="container">
+        <ul>
+            <li>
+                <a href="{{ path('post_new') }}">Create a new post</a>
             </li>
-        {% endfor %}
-    </ul>
+        </ul>
+        <ul>
+            {% for post in posts %}
+                <li class="row single-post">
+                    <article class="post">
+                        <header>
+                            <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
+                        </header>
+                    
+                        <img src="{{ asset(['images/', post.image]|join) }}" />
+                        <div>
+                            <p>{{ post.content(500) }}</p>
+                        </div>
+                    
+                        <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
+                    </article>
+                    <ul>
+                        <li>
+                            <a href="{{ path('post_show', { 'id': post.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('post_edit', { 'id': post.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
