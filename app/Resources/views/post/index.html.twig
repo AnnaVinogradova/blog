@@ -13,31 +13,72 @@
                 <a href="{{ path('post_new') }}">Create a new post</a>
             </li>
         </ul>
-        <ul>
-            {% for post in posts %}
-                <li class="row single-post">
-                    <article class="post">
-                        <header>
-                            <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
-                        </header>
-                    
-                        <img src="{{ asset(['images/', post.image]|join) }}" />
-                        <div>
-                            <p>{{ post.content(500) }}</p>
+        <div class="row">
+            <div class="tabs">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-1" data-toggle="tab">All accessable posts</a></li>
+                    {% if is_granted("ROLE_ADMIN") %}
+                        <li><a href="#tab-2" data-toggle="tab">My posts</a></li>
+                    {% endif %}    
+                </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="tab-1">
+                            {% for post in posts %}
+                                <li class="row single-post">
+                                    <article class="post">
+                                        <header>
+                                            <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
+                                        </header>
+                                    
+                                        <img src="{{ asset(['images/', post.image]|join) }}" />
+                                        <div>
+                                            <p>{{ post.content(500) }}</p>
+                                        </div>
+                                    
+                                        <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
+                                    </article>
+                                    <ul>
+                                        <li>
+                                            <a href="{{ path('post_show', { 'id': post.id }) }}">show</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ path('post_edit', { 'id': post.id }) }}">edit</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endfor %}
                         </div>
-                    
-                        <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
-                    </article>
-                    <ul>
-                        <li>
-                            <a href="{{ path('post_show', { 'id': post.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('post_edit', { 'id': post.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </li>
-            {% endfor %}
-        </ul>
+
+                        {% if is_granted("ROLE_ADMIN") %}
+                            <div class="tab-pane fade" id="tab-2">
+                            {% for post in my_posts %}
+                                <li class="row single-post">
+                                    <article class="post">
+                                        <header>
+                                            <h2><a href="{{ path('show', { 'id': post.id }) }}">{{ post.title }}</a></h2>
+                                        </header>
+                                    
+                                        <img src="{{ asset(['images/', post.image]|join) }}" />
+                                        <div>
+                                            <p>{{ post.content(500) }}</p>
+                                        </div>
+                                    
+                                        <div class="date"><time datetime="{{ post.created|date('c') }}">{{ post.created|date('l, F j, Y') }}</time></div>
+                                    </article>
+                                    <ul>
+                                        <li>
+                                            <a href="{{ path('post_show', { 'id': post.id }) }}">show</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ path('post_edit', { 'id': post.id }) }}">edit</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
