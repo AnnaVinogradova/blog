@@ -29,7 +29,11 @@
                     <ul class="row nav navbar-nav">
                         <li><a href="{{ path('homepage') }}">All posts</a></li>
                         <li><a href="{{ path('about') }}">About</a></li>
-                        <li><a href="{{ path('all_posts') }}">Home</a></li>    
+                        {% if is_granted("ROLE_USER") %}
+                        <li><a href="{{ path('fos_user_profile_show') }}">Home</a></li> 
+                        {% else %}   
+                        <li><a href="{{ path('fos_user_security_login') }}">Login</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>

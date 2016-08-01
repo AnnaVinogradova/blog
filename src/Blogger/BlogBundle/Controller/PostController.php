@@ -15,14 +15,16 @@ use Blogger\BlogBundle\Form\PostType;
 class PostController extends Controller
 {
     /**
-     * Lists all Post entities.
+     * Lists all Post entities for current user.
      *
      */
     public function indexAction()
     {
+        $user = $this->container->get('security.context')->getToken()->getUser();
+
         $em = $this->getDoctrine()->getManager();
 
-        $posts = $em->getRepository('BloggerBlogBundle:Post')->findAll();
+        $posts = $em->getRepository('BloggerBlogBundle:Post')->findByAuthor($user->getUsername());
 
         return $this->render('post/index.html.twig', array(
             'posts' => $posts,
