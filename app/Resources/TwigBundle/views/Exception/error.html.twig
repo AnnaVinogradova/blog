@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ status_code }}{% endblock %}
+
+{% block body %}
+<div id="content">
+	The server returned a "{{ status_code }} {{ status_text }}".
+</div>
+{% endblock %}

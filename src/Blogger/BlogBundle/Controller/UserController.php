@@ -41,14 +41,16 @@ class UserController extends Controller
      */
     public function newAction(Request $request)
     {
-        $user = new User();
+        $userManager = $this->get('fos_user.user_manager');
+		$user = $userManager->createUser();
+
         $form = $this->createForm('Blogger\BlogBundle\Form\UserType', $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            $user->setEnabled(true);
+        	$user->setPlainPassword($user->getPassword());
+            $userManager->updateUser($user);
 
             return $this->redirectToRoute('user_index', array('id' => $user->getId()));
         }
@@ -56,22 +58,6 @@ class UserController extends Controller
         return $this->render('user/new.html.twig', array(
             'user' => $user,
             'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a User entity.
-     *
-     * @Route("/{id}", name="user_show")
-     * @Method("GET")
-     */
-    public function showAction(User $user)
-    {
-        $deleteForm = $this->createDeleteForm($user);
-
-        return $this->render('user/show.html.twig', array(
-            'user' => $user,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
