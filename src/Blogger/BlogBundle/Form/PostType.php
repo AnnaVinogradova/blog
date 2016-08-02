@@ -18,7 +18,8 @@ class PostType extends AbstractType
         $builder
             ->add('title')
             ->add('content')
-            ->add('image', FileType::class, array('data_class' => null, 'label' => 'Post (JPG file)'))
+            ->add('image', FileType::class, array('data_class' => null, 'label' => 'Post (JPG file)','required' => false,
+            'empty_data'  => null))
         ;
     }
     

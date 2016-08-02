@@ -40,7 +40,6 @@ class Post
      * @var string
      *
      * @ORM\Column(name="image", type="string", length=255)
-     * @Assert\NotBlank(message="Please, upload the post image as a jpg file.")
      * @Assert\File(mimeTypes={ "image/jpeg" })
      */
     private $image;

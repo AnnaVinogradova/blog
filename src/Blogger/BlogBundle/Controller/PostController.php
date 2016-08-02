@@ -132,7 +132,9 @@ class PostController extends Controller
     public function editAction(Request $request, Post $post)
     {
         $securityContext = $this->container->get('security.context');
+        $em = $this->getDoctrine()->getManager();
 
+        $fileName = $post->getImage();
         if(! $securityContext->isGranted('ROLE_ADMIN')){
             if(! $this->checkAccess($post->getId())){
                 return $this->render('post/access_denied.html.twig');
@@ -146,14 +148,15 @@ class PostController extends Controller
         if ($editForm->isSubmitted() && $editForm->isValid()) {
 
             $file = $post->getImage();
+            if($file != null){
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
                 $file->move(
                     $this->getParameter('post_directory'),
                     $fileName
                 );
-
+            }
+            
             $post->setImage($fileName);
-            $em = $this->getDoctrine()->getManager();
             $em->persist($post);
             $em->flush();
 
