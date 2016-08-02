@@ -60,6 +60,23 @@ class PostController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // $file stores the uploaded JPG file
+            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+            $file = $post->getImage();
+
+            // Generate a unique name for the file before saving it
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            $file->move(
+                $this->getParameter('post_directory'),
+                $fileName
+            );
+
+            // Update the 'brochure' property to store the PDF file name
+            // instead of its contents
+            $post->setImage($fileName);
+
             $em = $this->getDoctrine()->getManager();
 
             $user = $this->container->get('security.context')->getToken()->getUser();
@@ -117,6 +134,15 @@ class PostController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+
+            $file = $post->getImage();
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+                $file->move(
+                    $this->getParameter('post_directory'),
+                    $fileName
+                );
+                
+            $post->setImage($fileName);
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);
             $em->flush();
