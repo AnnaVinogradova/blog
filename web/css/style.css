@@ -33,6 +33,14 @@ li {
     list-style-type: none;
 }
 
+legend {
+    border-bottom: 1px solid #000;
+}
+
+    fieldset li {
+        font-style: italic;
+    }
+
 #content {
     padding: 30px;
     margin-left: 20px;

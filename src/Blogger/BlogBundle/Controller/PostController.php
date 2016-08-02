@@ -24,28 +24,36 @@ class PostController extends Controller
         $em = $this->getDoctrine()->getManager();
         $user = $securityContext->getToken()->getUser();
 
-        if($securityContext->isGranted('ROLE_ADMIN')){
-            $posts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
-                array(), 
-                array('created' => 'DESC'));
+        if($securityContext->isGranted('ROLE_USER')){
+            $securityContext = $this->container->get('security.context');
+            $em = $this->getDoctrine()->getManager();
+            $user = $securityContext->getToken()->getUser();
 
-            $myPosts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
-                array('user' => $user), 
-                array('created' => 'DESC'));
+            if($securityContext->isGranted('ROLE_ADMIN')){
+                $posts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
+                    array(), 
+                    array('created' => 'DESC'));
 
-            return $this->render('post/index.html.twig', array(
-            'posts' => $posts,
-            'my_posts' => $myPosts
-            ));
+                $myPosts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
+                    array('user' => $user), 
+                    array('created' => 'DESC'));
+
+                return $this->render('post/index.html.twig', array(
+                'posts' => $posts,
+                'my_posts' => $myPosts
+                ));
+                
+            } else {    
+                $posts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
+                    array('user' => $user), 
+                    array('created' => 'DESC'));
             
-        } else {    
-            $posts = $em->getRepository('BloggerBlogBundle:Post')->findBy(
-                array('user' => $user), 
-                array('created' => 'DESC'));
-        
-        return $this->render('post/index.html.twig', array(
-            'posts' => $posts,
-        ));
+            return $this->render('post/index.html.twig', array(
+                'posts' => $posts,
+            ));
+            }
+        } else {
+            return $this->render('post/access_denied.html.twig');
         }
     }
 
@@ -55,41 +63,43 @@ class PostController extends Controller
      */
     public function newAction(Request $request)
     {
-        $post = new Post();
-        $form = $this->createForm('Blogger\BlogBundle\Form\PostType', $post);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
+        $em = $this->getDoctrine()->getManager();
+        $user = $securityContext->getToken()->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // $file stores the uploaded JPG file
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
-            $file = $post->getImage();
+        if($securityContext->isGranted('ROLE_USER')){
+            $post = new Post();
+            $form = $this->createForm('Blogger\BlogBundle\Form\PostType', $post);
+            $form->handleRequest($request);
 
-            // Generate a unique name for the file before saving it
-            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $file = $post->getImage();
 
-            // Move the file to the directory where brochures are stored
-            $file->move(
-                $this->getParameter('post_directory'),
-                $fileName
-            );
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
-            // Update the 'brochure' property to store the PDF file name
-            // instead of its contents
-            $post->setImage($fileName);
+                $file->move(
+                    $this->getParameter('post_directory'),
+                    $fileName
+                );
 
-            $em = $this->getDoctrine()->getManager();
+                $post->setImage($fileName);
 
-            $user = $this->container->get('security.context')->getToken()->getUser();
-            $user->addPost($post);
-            $em->flush();
+                $em = $this->getDoctrine()->getManager();
 
-            return $this->redirectToRoute('post_show', array('id' => $post->getId()));
+                $user = $this->container->get('security.context')->getToken()->getUser();
+                $user->addPost($post);
+                $em->flush();
+
+                return $this->redirectToRoute('post_show', array('id' => $post->getId()));
+            }
+
+            return $this->render('post/new.html.twig', array(
+                'post' => $post,
+                'form' => $form->createView(),
+            ));
+        } else {
+            return $this->render('post/access_denied.html.twig');
         }
-
-        return $this->render('post/new.html.twig', array(
-            'post' => $post,
-            'form' => $form->createView(),
-        ));
     }
 
     /**
@@ -141,7 +151,7 @@ class PostController extends Controller
                     $this->getParameter('post_directory'),
                     $fileName
                 );
-                
+
             $post->setImage($fileName);
             $em = $this->getDoctrine()->getManager();
             $em->persist($post);
