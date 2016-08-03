@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Form\FormError;
 use Blogger\BlogBundle\Entity\User;
 use Blogger\BlogBundle\Form\UserType;
 
@@ -50,9 +51,13 @@ class UserController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             $user->setEnabled(true);
         	$user->setPlainPassword($user->getPassword());
-            $userManager->updateUser($user);
-
-            return $this->redirectToRoute('user_index', array('id' => $user->getId()));
+            try {
+                $userManager->updateUser($user);
+                return $this->redirectToRoute('user_index', array('id' => $user->getId()));
+            }
+            catch(\Exception $e) {
+                $form->addError(new FormError('User with email or username already exist'));
+            }
         }
 
         return $this->render('user/new.html.twig', array(
@@ -75,10 +80,15 @@ class UserController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            try {
+                $em->persist($user);
+                $em->flush();
 
-            return $this->redirectToRoute('user_edit', array('id' => $user->getId()));
+                return $this->redirectToRoute('user_index', array('id' => $user->getId()));
+            }
+            catch(\Exception $e) {
+                $editForm->addError(new FormError('User with email or username already exist'));
+            }
         }
 
         return $this->render('user/edit.html.twig', array(

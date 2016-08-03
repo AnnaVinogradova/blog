@@ -4,5 +4,6 @@
 <div id="content">
 	<h3>Edit profile</h3>
 	{% include "FOSUserBundle:Profile:edit_content.html.twig" %}
+	<a href="{{ path('fos_user_change_password') }}">Change password</a>
 </div>
 {% endblock body %}

@@ -3,6 +3,7 @@
 namespace Blogger\BlogBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -17,6 +18,11 @@ class User extends BaseUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+    
+    /**
+    * @Assert\NotBlank()
+     */
+    protected $username;
 
     /**
      * @ORM\OneToMany(targetEntity="Post", mappedBy="user", cascade={"persist", "remove"})

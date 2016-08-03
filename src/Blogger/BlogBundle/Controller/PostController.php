@@ -74,13 +74,17 @@ class PostController extends Controller
 
             if ($form->isSubmitted() && $form->isValid()) {
                 $file = $post->getImage();
+                
+                if($file == null){
+                    $fileName = 'default.jpg';
+                } else {
+                    $fileName = md5(uniqid()).'.'.$file->guessExtension();
 
-                $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-                $file->move(
-                    $this->getParameter('post_directory'),
-                    $fileName
-                );
+                    $file->move(
+                        $this->getParameter('post_directory'),
+                        $fileName
+                    );
+                }
 
                 $post->setImage($fileName);
 
@@ -160,7 +164,7 @@ class PostController extends Controller
             $em->persist($post);
             $em->flush();
 
-            return $this->redirectToRoute('post_edit', array('id' => $post->getId()));
+            return $this->redirectToRoute('post_show', array('id' => $post->getId()));
         }
 
         return $this->render('post/edit.html.twig', array(
