@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Blogger\BlogBundle\BloggerBlogBundle(),
             new FOS\UserBundle\FOSUserBundle(),
+            new Blogger\TodolistBundle\BloggerTodolistBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

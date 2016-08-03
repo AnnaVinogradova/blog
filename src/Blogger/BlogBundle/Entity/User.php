@@ -29,6 +29,11 @@ class User extends BaseUser
      */
     protected $posts;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $requests;
+
     public function addPost(Post $post)
     {
         $this->posts[] = $post;
