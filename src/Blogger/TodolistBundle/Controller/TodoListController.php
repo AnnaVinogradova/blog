@@ -27,11 +27,25 @@ class TodoListController extends Controller
         $securityContext = $this->container->get('security.context');
         $user = $securityContext->getToken()->getUser();
 
-        $todoLists = $user->getTodolists();
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            $todoLists = $user->getTodolists();
+            $requests = $user->getRequests();
+            $accessable = array();
+            foreach ($requests as $request) {
+                $accessable[] = $request->getTodolist();
+            }
 
+            return $this->render('todolist/index.html.twig', array(
+                'todoLists' => $todoLists,
+                'accessable' => $accessable
+            ));
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $todoLists = $em->getRepository('BloggerTodolistBundle:TodoList')->findAll();
         return $this->render('todolist/index.html.twig', array(
-            'todoLists' => $todoLists,
-        ));
+                'todoLists' => $todoLists
+            )); 
     }
 
     /**
@@ -85,12 +99,19 @@ class TodoListController extends Controller
      */
     public function editAction(Request $request, TodoList $todoList)
     {
+        $em = $this->getDoctrine()->getManager();
         $deleteForm = $this->createDeleteForm($todoList);
         $editForm = $this->createForm('Blogger\TodolistBundle\Form\TodoListType', $todoList);
         $editForm->handleRequest($request);
 
+        $securityContext = $this->container->get('security.context');
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            if(!$this->checkIsCreator($todoList->getId(), $em)){
+                return $this->render('post/access_denied.html.twig');
+            } 
+        }
+
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
             $em->persist($todoList);
             $em->flush();
 
@@ -112,8 +133,16 @@ class TodoListController extends Controller
      */
     public function deleteAction(Request $request, TodoList $todoList)
     {
+        $em = $this->getDoctrine()->getManager();
         $form = $this->createDeleteForm($todoList);
         $form->handleRequest($request);
+
+        $securityContext = $this->container->get('security.context');
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            if(!$this->checkIsCreator($todoList->getId(), $em)){
+                return $this->render('post/access_denied.html.twig');
+            } 
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -138,5 +167,14 @@ class TodoListController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function checkIsCreator($id, $em)
+    {
+        $user = $this->container->get('security.context')->getToken()->getUser();
+        return  $em->getRepository('BloggerTodolistBundle:TodoList')->findBy( 
+                array('id' => $id,
+                'user' => $user)
+                );
     }
 }

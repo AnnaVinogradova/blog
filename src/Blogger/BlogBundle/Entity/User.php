@@ -47,6 +47,23 @@ class User extends BaseUser
     }
      
     /**
+     * Get requests
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRequests()
+    {
+        return $this->requests;
+    }
+ 
+    public function addRequest(\Blogger\TodolistBundle\Entity\Request $request)
+    {
+        $this->requests[] = $request;
+        $request->setUser($this);
+        return $this;
+    }
+     
+    /**
      * Get messages
      *
      * @return Doctrine\Common\Collections\Collection 
@@ -55,7 +72,7 @@ class User extends BaseUser
     {
         return $this->posts;
     }
- 
+
     public function addTodolist(\Blogger\TodolistBundle\Entity\TodoList $todolist)
     {
         $this->todolists[] = $todolist;
