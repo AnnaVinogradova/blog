@@ -73,5 +73,54 @@ class Request
     {
         return $this->status;
     }
+
+    /**
+     * Set todolist
+     *
+     * @param string $todolist
+     *
+     * @return TodoList
+     */
+    public function setTodolist($todolist)
+    {
+        $this->todolist = $todolist;
+
+        return $this;
+    }
+
+    /**
+     * Get todolist
+     *
+     * @return string
+     */
+    public function getTodolist()
+    {
+        return $this->todolist;
+    }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return TodoList
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
 }
 

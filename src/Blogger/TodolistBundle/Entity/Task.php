@@ -100,9 +100,9 @@ class Task
     }
 
     /**
-     * Set user
+     * Set todolist
      *
-     * @param string $user
+     * @param string $todolist
      *
      * @return TodoList
      */

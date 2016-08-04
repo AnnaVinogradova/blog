@@ -105,7 +105,7 @@ class TodoList
     }
 
     /**
-     * Add message
+     * Add task
      *
      * @param Blogger\TodolistBundle\Entity\Task $task
      */
@@ -126,10 +126,31 @@ class TodoList
         return $this->tasks;
     }
  
-     
+    /**
+     * Add request
+     *
+     * @param Blogger\TodolistBundle\Entity\Request $request
+     */
+    public function addRequest(Request $request)
+    {
+        $this->requests[] = $request;
+        $request->setTodolist($this);
+        return $this;
+    }
+
+    /**
+     * Get requests
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getRequests()
+    {
+        return $this->requests;
+    }
+
     public function __construct()
     {
-        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->requests = new \Doctrine\Common\Collections\ArrayCollection();
     }
 }
 

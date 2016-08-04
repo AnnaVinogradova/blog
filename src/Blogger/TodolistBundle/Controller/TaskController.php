@@ -17,23 +17,6 @@ use Blogger\TodolistBundle\Form\TaskType;
 class TaskController extends Controller
 {
     /**
-     * Lists all Task entities.
-     *
-     * @Route("/", name="task_index")
-     * @Method("GET")
-     */
-    public function indexAction()
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $tasks = $em->getRepository('BloggerTodolistBundle:Task')->findAll();
-
-        return $this->render('task/index.html.twig', array(
-            'tasks' => $tasks,
-        ));
-    }
-
-    /**
      * Creates a new Task entity.
      *
      * @Route("/{id}/new", name="task_new")
