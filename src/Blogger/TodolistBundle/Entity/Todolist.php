@@ -3,12 +3,13 @@
 namespace Blogger\TodolistBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Todolist
  *
  * @ORM\Table(name="todolist")
- * @ORM\Entity(repositoryClass="Blogger\TasklistBundle\Repository\TodolistRepository")
+ * @ORM\Entity(repositoryClass="Blogger\TodolistBundle\Repository\TodolistRepository")
  */
 class TodoList
 {
@@ -25,11 +26,12 @@ class TodoList
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Task", mappedBy="todolist", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="todo_list", cascade={"persist", "remove"})
      */
     private $tasks;
 

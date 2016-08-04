@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/bloggertodolist/css/todolist.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <h3>TodoList list</h3>
+    <div id="content" class="container">
+        <ul>
+            <li>
+                <a href="{{ path('todolist_new') }}">Create a new list</a>
+            </li>
+        </ul>
+        <ul>
+        {% for todoList in todoLists %}
+            <li class="row single-item">
+                Name: <span>{{ todoList.name }}</span>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('todolist_show', { 'id': todoList.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('todolist_edit', { 'id': todoList.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+
+    
+{% endblock %}

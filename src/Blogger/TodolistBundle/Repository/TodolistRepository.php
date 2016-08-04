@@ -1,6 +1,6 @@
 <?php
 
-namespace Blogger\TasklistBundle\Repository;
+namespace Blogger\TodolistBundle\Repository;
 
 /**
  * TodolistRepository

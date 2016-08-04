@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Request
  *
  * @ORM\Table(name="request")
- * @ORM\Entity(repositoryClass="Blogger\TasklistBundle\Repository\RequestRepository")
+ * @ORM\Entity(repositoryClass="Blogger\TodolistBundle\Repository\RequestRepository")
  */
 class Request
 {

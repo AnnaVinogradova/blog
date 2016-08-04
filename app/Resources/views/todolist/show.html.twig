@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/bloggerblog/css/todolist.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <div id="content">
+        <h3>TodoList</h3>
+            <h5>{{ todoList.name }}</h5>
+            
+        <ul class="list-link">
+            <li>
+                <a href="{{ path('todolist_index') }}">Back to the list</a>
+            </li>
+            <li>
+                <a href="{{ path('todolist_edit', { 'id': todoList.id }) }}">Edit</a>
+            </li>
+            <li>
+                {{ form_start(delete_form) }}
+                    <input type="submit" value="Delete">
+                {{ form_end(delete_form) }}
+            </li>
+        </ul>
+    </div>
+{% endblock %}

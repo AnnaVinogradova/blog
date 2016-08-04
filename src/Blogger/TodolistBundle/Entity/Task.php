@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Task
  *
  * @ORM\Table(name="task")
- * @ORM\Entity(repositoryClass="Blogger\TasklistBundle\Repository\TaskRepository")
+ * @ORM\Entity(repositoryClass="Blogger\TodolistBundle\Repository\TaskRepository")
  */
 class Task
 {

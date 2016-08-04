@@ -1,6 +1,6 @@
 <?php
 
-namespace Blogger\TasklistBundle\Tests\Controller;
+namespace Blogger\TodolistBundle\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 

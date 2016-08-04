@@ -1,4 +1,4 @@
 services:
-#    blogger_tasklist.example:
-#        class: Blogger\TasklistBundle\Example
+#    blogger_todolist.example:
+#        class: Blogger\TodolistBundle\Example
 #        arguments: ["@service_id", "plain_value", %parameter%]

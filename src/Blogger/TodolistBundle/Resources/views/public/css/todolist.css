@@ -1,0 +1,10 @@
+li.single-item {
+	border-bottom: 1px solid #ccc;
+	padding: 10px;
+}
+
+.single-item li {
+	display: inline-block;
+	text-decoration: underline;
+	color: #00f;
+}
