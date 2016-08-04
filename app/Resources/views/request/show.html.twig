@@ -10,16 +10,22 @@
             
         
         <ul>
-            <li>
-                <a href="{{ path('request_index', { 'id': list }) }}">Back to the list</a>
-            </li>
-            <li>
-                <a href="{{ path('request_edit', { 'id': request.id }) }}">Edit</a>
-            </li>
             <li class="edit-form">
                 {{ form_start(delete_form) }}
                     <input type="submit" value="Delete">
                 {{ form_end(delete_form) }}
+            </li>
+            {% if is_granted("ROLE_ADMIN") %}
+                <li>
+                    <a href="{{ path('request_edit', { 'id': request.id }) }}">Accept/Reject</a>
+                </li>
+            {% endif %}
+            <li>
+                {% if is_granted("ROLE_ADMIN") %}
+                    <a href="{{ path('request_control') }}">Back to the admin list</a>
+                {% else %}
+                    <a href="{{ path('request_index', { 'id': list }) }}">Back to the list</a>
+                {% endif %}
             </li>
         </ul>
     </div>

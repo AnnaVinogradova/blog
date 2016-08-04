@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="content">
+        <h3>Request list</h3>   
+             {% for request in requests %}
+                Request for user: {{request.user}} <br>
+                Status: {% if request.status %}Accept{% else %}Waiting{% endif %}
+                    <ul>
+                        <li>
+                            <a href="{{ path('request_show', { 'id': request.id }) }}">show</a>
+                        </li>
+                    </ul>
+             {% endfor %}
+    </div>     
+{% endblock %}
