@@ -31,6 +31,12 @@ class TodoList
     private $name;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User")
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     */
+    private $user;
+
+    /**
      * @ORM\OneToMany(targetEntity="Task", mappedBy="todo_list", cascade={"persist", "remove"})
      */
     private $tasks;
@@ -72,6 +78,58 @@ class TodoList
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return TodoList
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Add message
+     *
+     * @param Blogger\TodolistBundle\Entity\Task $task
+     */
+    public function addTask(Task $task)
+    {
+        $this->tasks[] = $task;
+        $task->setTodolist($this);
+        return $this;
+    }
+
+    /**
+     * Get tasks
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTasks()
+    {
+        return $this->tasks;
+    }
+ 
+     
+    public function __construct()
+    {
+        $this->tasks = new \Doctrine\Common\Collections\ArrayCollection();
     }
 }
 

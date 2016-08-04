@@ -98,5 +98,29 @@ class Task
     {
         return $this->status;
     }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return TodoList
+     */
+    public function setTodolist($todolist)
+    {
+        $this->todo_list = $todolist;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getTodolist()
+    {
+        return $this->todo_list;
+    }
 }
 

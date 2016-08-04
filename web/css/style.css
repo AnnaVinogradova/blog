@@ -86,3 +86,14 @@ legend {
     li.single-post {
         list-style-type: none;
     }
+
+.item li {
+    display: inline-block;
+    text-decoration: underline;
+    color: #00f;
+    font-style: italic;
+}
+
+.item li:first-child {
+    margin-left: -20px;
+}

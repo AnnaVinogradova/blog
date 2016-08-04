@@ -24,9 +24,10 @@ class TodoListController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
 
-        $todoLists = $em->getRepository('BloggerTodolistBundle:TodoList')->findAll();
+        $todoLists = $user->getTodolists();
 
         return $this->render('todolist/index.html.twig', array(
             'todoLists' => $todoLists,
@@ -47,7 +48,8 @@ class TodoListController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($todoList);
+            $user = $this->container->get('security.context')->getToken()->getUser();
+            $user->addTodolist($todoList);
             $em->flush();
 
             return $this->redirectToRoute('todolist_show', array('id' => $todoList->getId()));

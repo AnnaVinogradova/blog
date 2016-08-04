@@ -17,7 +17,7 @@
         {% for todoList in todoLists %}
             <li class="row single-item">
                 Name: <span>{{ todoList.name }}</span>
-                <td>
+
                     <ul>
                         <li>
                             <a href="{{ path('todolist_show', { 'id': todoList.id }) }}">show</a>
@@ -26,7 +26,7 @@
                             <a href="{{ path('todolist_edit', { 'id': todoList.id }) }}">edit</a>
                         </li>
                     </ul>
-                </td>
+
             </li>
         {% endfor %}
         </ul>

@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div id="content">
+        <h3>Task</h3>
+        {{ task.name }}<br>
+        Status: 
+            {% if task.status %}Done{% else %}Active{% endif %}</td>
+        <ul>
+            <li>
+                <a href="{{ path('todolist_show', { 'id': list}) }}">Back to the list</a>
+            </li>
+            <li>
+                <a href="{{ path('task_edit', { 'id': task.id }) }}">Edit</a>
+            </li>
+            <li>
+                <div class="edit-form">
+                    {{ form_start(delete_form) }}
+                        <input type="submit" value="Delete">
+                    {{ form_end(delete_form) }}
+                </div>
+            </li>
+        </ul>
+    </div>
+{% endblock %}

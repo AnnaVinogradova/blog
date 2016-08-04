@@ -7,17 +7,41 @@
 
 {% block body %}
     <div id="content">
-        <h3>TodoList</h3>
-            <h5>{{ todoList.name }}</h5>
-            
-        <ul class="list-link">
+        <h3>Todolist: {{ todoList.name }}</h3>
+            <h4>Tasks:</h4>
+            <ol>
+                {% for task in todoList.tasks %}
+                    <li class="row single-item">
+                        {{ loop.index }})
+                        {% if task.status %}
+                            <strike>
+                                {{ task.name }}
+                            </strike>
+                        {% else %}
+                            {{ task.name }}
+                        {% endif %}
+                        <ul class="item">
+                            <li>
+                                <a href="{{ path('task_show', { 'id': task.id }) }}">show</a>
+                            </li>
+                            <li>
+                                <a href="{{ path('task_edit', { 'id': task.id }) }}">edit</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ol>
+        <ul class="list-link">   
             <li>
-                <a href="{{ path('todolist_index') }}">Back to the list</a>
+                <a href="{{ path('task_new', { 'id': todoList.id }) }}">Create a new task</a>
             </li>
             <li>
                 <a href="{{ path('todolist_edit', { 'id': todoList.id }) }}">Edit</a>
             </li>
             <li>
+                <a href="{{ path('todolist_index') }}">Back to the list</a>
+            </li>
+            <li class="edit-form">
                 {{ form_start(delete_form) }}
                     <input type="submit" value="Delete">
                 {{ form_end(delete_form) }}

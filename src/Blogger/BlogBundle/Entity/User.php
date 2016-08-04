@@ -30,6 +30,11 @@ class User extends BaseUser
     protected $posts;
 
     /**
+     * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\TodoList", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $todolists;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
      */
     private $requests;
@@ -51,10 +56,27 @@ class User extends BaseUser
         return $this->posts;
     }
  
+    public function addTodolist(\Blogger\TodolistBundle\Entity\TodoList $todolist)
+    {
+        $this->todolists[] = $todolist;
+        $todolist->setUser($this);
+        return $this;
+    }
      
+    /**
+     * Get todolists
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getTodolists()
+    {
+        return $this->todolists;
+    }
+
     public function __construct()
     {
     	parent::__construct();
         $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->todolists = new \Doctrine\Common\Collections\ArrayCollection();
     }
 }
