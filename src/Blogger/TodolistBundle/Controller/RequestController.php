@@ -86,7 +86,7 @@ class RequestController extends Controller
         if ($form->isSubmitted() && $form->isValid()) {
             if($this->getDoctrine()->getRepository('BloggerTodolistBundle:Request')
                      ->findBy(array('todolist' => $todoList, 'user' => $request->getUser()))){
-                            $form->addError(new FormError("This request already exist. Please, waiting for admin's checking"));
+                            $form->addError(new FormError("This request already exists. Please, waiting for admin's checking"));
                             return $this->render('request/new.html.twig', array(
                                 'request' => $request,
                                 'list' => $id,
