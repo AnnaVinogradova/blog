@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\TodolistBundle\Entity\Request;
+use Blogger\TodolistBundle\Entity\TodoList;
 use Blogger\TodolistBundle\Form\RequestType;
 use Symfony\Component\Form\FormError;
 
@@ -30,7 +31,8 @@ class RequestController extends Controller
             ->getRepository('BloggerTodolistBundle:TodoList')
             ->find($id);
 
-        if(!$this->isAccessable($todoList, "user")){
+        $securityContext = $this->container->get('security.context');
+        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::CREATOR_ROLE)){
                 return $this->render('post/access_denied.html.twig');
         }
 
@@ -75,7 +77,8 @@ class RequestController extends Controller
             ->getRepository('BloggerTodolistBundle:TodoList')
             ->find($id);
 
-        if(!$this->isAccessable($todoList, "creator")){
+        $securityContext = $this->container->get('security.context');
+        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::CREATOR_ROLE)){
                 return $this->render('post/access_denied.html.twig');
         }
 
@@ -119,7 +122,8 @@ class RequestController extends Controller
     {
         $todoList = $request->getTodolist();
 
-        if(!$this->isAccessable($todoList, "creator")){
+        $securityContext = $this->container->get('security.context');
+        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::CREATOR_ROLE)){
             return $this->render('post/access_denied.html.twig');
         }
 
@@ -176,7 +180,8 @@ class RequestController extends Controller
         $form->handleRequest($http_request);
         $list = $request->getTodolist();
 
-        if(!$this->isAccessable($list, "creator")){
+        $securityContext = $this->container->get('security.context');
+        if(!TodoList::isAccessable($securityContext, $this, $list, TodoList::CREATOR_ROLE)){
             return $this->render('post/access_denied.html.twig'); 
         }
       
@@ -207,41 +212,6 @@ class RequestController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
-    }
-
-    private function isAccessable($todoList, $role){
-        $securityContext = $this->container->get('security.context');
-
-        if(!$securityContext->isGranted('ROLE_ADMIN')){
-            $user = $securityContext->getToken()->getUser();
-            $em = $this->getDoctrine()->getManager();
-            if($role == 'user'){
-                return $this->checkAccess($todoList, $user, $em); 
-            } else {
-                return $this->checkIsCreator($todoList, $user, $em);
-            }
-        }
-        return true;
-    }
-
-    private function checkAccess($list, $user, $em)
-    {
-        if($this->checkIsCreator($list, $user, $em)){
-            return true;
-        }
-        return  $em->getRepository('BloggerTodolistBundle:Request')->findBy( 
-                array('todolist' => $list,
-                'user' => $user,
-                'status' => true)
-                );
-    }
-
-    private function checkIsCreator($list, $user, $em)
-    {
-        return  $em->getRepository('BloggerTodolistBundle:TodoList')->findBy( 
-                array('id' => $list->getId(),
-                'user' => $user)
-                );
     }
 
 }

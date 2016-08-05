@@ -13,6 +13,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TodoList
 {
+    const CREATOR_ROLE = 1;
+    const USER_ROLE = 0;
+
     /**
      * @var int
      *
@@ -151,6 +154,39 @@ class TodoList
     public function __construct()
     {
         $this->requests = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    public static function isAccessable($securityContext, $context, $todoList, $role){
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $context->getDoctrine()->getManager();
+            if($role == self::USER_ROLE){
+                return self::checkAccess($todoList, $user, $em); 
+            } else {
+                return self::checkIsCreator($todoList, $user, $em);
+            }
+        }
+        return true;
+    }
+
+    private static function checkAccess($list, $user, $em)
+    {
+        if(self::checkIsCreator($list, $user, $em)){
+            return true;
+        }
+        return  $em->getRepository('BloggerTodolistBundle:Request')->findBy( 
+                array('todolist' => $list,
+                'user' => $user,
+                'status' => true)
+                );
+    }
+
+    private static function checkIsCreator($list, $user, $em)
+    {
+        return  $em->getRepository('BloggerTodolistBundle:TodoList')->findBy( 
+                array('id' => $list->getId(),
+                'user' => $user)
+                );
     }
 }
 

@@ -32,7 +32,6 @@ class Request
     /**
      * @ORM\ManyToOne(targetEntity="TodoList", inversedBy="requests")
      * @ORM\JoinColumn(name="todolist_id", referencedColumnName="id")
-     * @Assert\NotNull()
      */
     private $todolist;
 
