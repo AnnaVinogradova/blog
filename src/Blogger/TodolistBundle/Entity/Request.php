@@ -3,6 +3,7 @@
 namespace Blogger\TodolistBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Request
@@ -29,14 +30,16 @@ class Request
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity="TodoList")
+     * @ORM\ManyToOne(targetEntity="TodoList", inversedBy="requests")
      * @ORM\JoinColumn(name="todolist_id", referencedColumnName="id")
+     * @Assert\NotNull()
      */
     private $todolist;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="requests")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+     * @Assert\NotNull()
      */
     private $user;
 

@@ -3,6 +3,7 @@
 namespace Blogger\TodolistBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Task
@@ -25,6 +26,7 @@ class Task
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $name;
 
@@ -35,11 +37,11 @@ class Task
      */
     private $status;
 
-        /**
-     * @ORM\ManyToOne(targetEntity="TodoList")
+    /**
+     * @ORM\ManyToOne(targetEntity="TodoList", inversedBy="tasks")
      * @ORM\JoinColumn(name="todolist_id", referencedColumnName="id")
      */
-    private $todo_list;
+    private $todolist;
 
     /**
      * Get id
@@ -108,7 +110,7 @@ class Task
      */
     public function setTodolist($todolist)
     {
-        $this->todo_list = $todolist;
+        $this->todolist = $todolist;
 
         return $this;
     }
@@ -120,7 +122,6 @@ class Task
      */
     public function getTodolist()
     {
-        return $this->todo_list;
+        return $this->todolist;
     }
 }
-

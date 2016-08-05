@@ -6,7 +6,9 @@
             Status:
                     {% if request.status %}Accept{% else %}Waiting{% endif %}<br>
             User:
-                {{ request.user }}
+                {{ request.user }}<br>
+            List:
+                {{ request.todolist.name }}
             
         
         <ul>

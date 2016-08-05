@@ -5,6 +5,7 @@
         <h3>Request list</h3>   
              {% for request in requests %}
                 Request for user: {{request.user}} <br>
+                Request for list: {{request.todolist.name}} <br>
                 Status: {% if request.status %}Accept{% else %}Waiting{% endif %}
                     <ul>
                         <li>

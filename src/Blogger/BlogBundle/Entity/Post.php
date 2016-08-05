@@ -47,7 +47,7 @@ class Post
     private $image;
 
     /**
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="post", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="posts", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="cascade")
      * @var Blogger\BlogBundle\Entity\User
      */

@@ -31,13 +31,13 @@ class TodoList
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="todolists")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity="Task", mappedBy="todo_list", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="Task", mappedBy="todolist", cascade={"persist", "remove"})
      */
     private $tasks;
 
