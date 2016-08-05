@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\TodolistBundle\Entity\Request;
 use Blogger\TodolistBundle\Form\RequestType;
+use Symfony\Component\Form\FormError;
 
 /**
  * Request controller.
@@ -83,6 +84,16 @@ class RequestController extends Controller
         $form->handleRequest($http_request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if($this->getDoctrine()->getRepository('BloggerTodolistBundle:Request')
+                     ->findBy(array('todolist' => $todoList, 'user' => $request->getUser()))){
+                            $form->addError(new FormError("This request already exist. Please, waiting for admin's checking"));
+                            return $this->render('request/new.html.twig', array(
+                                'request' => $request,
+                                'list' => $id,
+                                'form' => $form->createView(),
+                            ));
+            }
+
             $em = $this->getDoctrine()->getManager();    
             $request->setStatus(null);
             $todoList->addRequest($request);
@@ -179,7 +190,7 @@ class RequestController extends Controller
         if($securityContext->isGranted('ROLE_ADMIN')){
             return $this->redirectToRoute('request_control');
         }
-        return $this->redirectToRoute('request_index', array('id' => $id));
+        return $this->redirectToRoute('request_index', array('id' => $list->getId()));
     }
 
     /**
