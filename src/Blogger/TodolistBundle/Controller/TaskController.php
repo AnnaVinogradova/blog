@@ -29,6 +29,10 @@ class TaskController extends Controller
             ->getRepository('BloggerTodolistBundle:TodoList')
             ->find($id);
 
+        if(!$this->isAccessable($todoList, "user")){
+            return $this->render('post/access_denied.html.twig'); 
+        }
+
         $task = new Task();
         $form = $this->createForm('Blogger\TodolistBundle\Form\TaskType', $task);
         $form->handleRequest($request);
@@ -56,6 +60,11 @@ class TaskController extends Controller
      */
     public function showAction(Task $task)
     {
+        $todoList = $task->getTodolist();
+        if(!$this->isAccessable($todoList, "user")){
+            return $this->render('post/access_denied.html.twig'); 
+        }
+
         $deleteForm = $this->createDeleteForm($task);
 
         return $this->render('task/show.html.twig', array(
@@ -73,6 +82,11 @@ class TaskController extends Controller
      */
     public function editAction(Request $request, Task $task)
     {
+        $todoList = $task->getTodolist();
+        if(!$this->isAccessable($todoList, "user")){
+            return $this->render('post/access_denied.html.twig');
+        }
+
         $deleteForm = $this->createDeleteForm($task);
         $editForm = $this->createForm('Blogger\TodolistBundle\Form\TaskType', $task);
         $editForm->handleRequest($request);
@@ -101,7 +115,13 @@ class TaskController extends Controller
      */
     public function deleteAction(Request $request, Task $task)
     {
-        $id = $task->getTodolist()->getId();
+
+        $todoList = $task->getTodolist();
+        if(!$this->isAccessable($todoList, "user")){
+            return $this->render('post/access_denied.html.twig'); 
+        }
+
+        $id = $todoList->getId();
         $form = $this->createDeleteForm($task);
         $form->handleRequest($request);
 
@@ -128,5 +148,40 @@ class TaskController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function isAccessable($todoList, $role){
+        $securityContext = $this->container->get('security.context');
+
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $this->getDoctrine()->getManager();
+            if($role == 'user'){
+                return $this->checkAccess($todoList, $user, $em); 
+            } else {
+                return $this->checkIsCreator($todoList, $user, $em);
+            }
+        }
+        return true;
+    }
+
+    private function checkAccess($list, $user, $em)
+    {
+        if($this->checkIsCreator($list, $user, $em)){
+            return true;
+        }
+        return  $em->getRepository('BloggerTodolistBundle:Request')->findBy( 
+                array('todolist' => $list,
+                'user' => $user,
+                'status' => true)
+                );
+    }
+
+    private function checkIsCreator($list, $user, $em)
+    {
+        return  $em->getRepository('BloggerTodolistBundle:TodoList')->findBy( 
+                array('id' => $list->getId(),
+                'user' => $user)
+                );
     }
 }
