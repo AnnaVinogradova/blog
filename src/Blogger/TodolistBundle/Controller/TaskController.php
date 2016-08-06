@@ -31,7 +31,7 @@ class TaskController extends Controller
             ->find($id);
 
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::USER_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
             return $this->render('post/access_denied.html.twig'); 
         }
 
@@ -64,7 +64,7 @@ class TaskController extends Controller
     {
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::USER_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
             return $this->render('post/access_denied.html.twig'); 
         }
 
@@ -87,7 +87,7 @@ class TaskController extends Controller
     {
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::USER_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
             return $this->render('post/access_denied.html.twig');
         }
 
@@ -122,7 +122,7 @@ class TaskController extends Controller
 
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::USER_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
             return $this->render('post/access_denied.html.twig'); 
         }
 

@@ -156,35 +156,35 @@ class TodoList
         $this->requests = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public static function isAccessable($securityContext, $context, $todoList, $role){
+    public function isAccessable($securityContext, $context, $role){
         if(!$securityContext->isGranted('ROLE_ADMIN')){
             $user = $securityContext->getToken()->getUser();
             $em = $context->getDoctrine()->getManager();
             if($role == self::USER_ROLE){
-                return self::checkAccess($todoList, $user, $em); 
+                return $this->checkAccess($user, $em); 
             } else {
-                return self::checkIsCreator($todoList, $user, $em);
+                return $this->checkIsCreator($user, $em);
             }
         }
         return true;
     }
 
-    private static function checkAccess($list, $user, $em)
+    private function checkAccess($user, $em)
     {
-        if(self::checkIsCreator($list, $user, $em)){
+        if($this->checkIsCreator($user, $em)){
             return true;
         }
         return  $em->getRepository('BloggerTodolistBundle:Request')->findBy( 
-                array('todolist' => $list,
+                array('todolist' => $this,
                 'user' => $user,
                 'status' => true)
                 );
     }
 
-    private static function checkIsCreator($list, $user, $em)
+    private function checkIsCreator($user, $em)
     {
         return  $em->getRepository('BloggerTodolistBundle:TodoList')->findBy( 
-                array('id' => $list->getId(),
+                array('id' => $this->getId(),
                 'user' => $user)
                 );
     }

@@ -97,7 +97,7 @@ class TodoListController extends Controller
     public function showAction(TodoList $todoList)
     {
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::USER_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
             return $this->render('post/access_denied.html.twig');
         }
 
@@ -122,7 +122,7 @@ class TodoListController extends Controller
         $editForm->handleRequest($request);
 
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::CREATOR_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
             return $this->render('post/access_denied.html.twig');
         }
 
@@ -153,7 +153,7 @@ class TodoListController extends Controller
         $form->handleRequest($request);
 
         $securityContext = $this->container->get('security.context');
-        if(!TodoList::isAccessable($securityContext, $this, $todoList, TodoList::CREATOR_ROLE)){
+        if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
             return $this->render('post/access_denied.html.twig'); 
         }
 
