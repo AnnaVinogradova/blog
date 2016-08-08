@@ -47,6 +47,13 @@ legend {
     background: #EEEDE3;
 }
 
+#marker-list li {
+    cursor: pointer;
+    text-decoration: underline;
+    margin-bottom: 5px;
+    font-style: italic;
+}
+
 .navbar-inverse {
     background: #222;
     border-radius: 0;

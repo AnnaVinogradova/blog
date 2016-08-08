@@ -49,6 +49,12 @@ class Marker
     private $user;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Map", inversedBy="markers")
+     * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
+     */
+    private $map;
+
+    /**
      * Get id
      *
      * @return int
