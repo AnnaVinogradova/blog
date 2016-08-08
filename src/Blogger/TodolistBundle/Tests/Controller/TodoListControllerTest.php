@@ -6,50 +6,50 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class TodoListControllerTest extends WebTestCase
 {
-    /*
+    
+    const USERNAME = 'username';
+    const PASSWORD = 'password';
+
     public function testCompleteScenario()
     {
         // Create a new client to browse the application
         $client = static::createClient();
 
+        $crawler = $client->request('GET', '/login');
+        $buttonCrawlerNode = $crawler->selectButton('Log in');
+        $form = $buttonCrawlerNode->form();
+        $data = array('_username' => self::USERNAME,'_password' => self::PASSWORD);
+        $client->submit($form,$data);
+
         // Create a new entry in the database
         $crawler = $client->request('GET', '/todolist/');
         $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /todolist/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
+        $link = $crawler->selectLink('Create a new list')->link();
+        $crawler = $client->click($link);
 
-        // Fill in the form and submit it
         $form = $crawler->selectButton('Create')->form(array(
-            'blogger_todolistbundle_todolist[field_name]'  => 'Test',
-            // ... other fields to fill
+            'todo_list[name]'  => 'Test',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
-
-        // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
+        $this->assertGreaterThan(0, $crawler->filter('h3:contains("Test")')->count(), 'Fialed to find creted element');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
-        $form = $crawler->selectButton('Update')->form(array(
-            'blogger_todolistbundle_todolist[field_name]'  => 'Foo',
-            // ... other fields to fill
+        $form = $crawler->selectButton('Edit')->form(array(
+            'todo_list[name]'  => 'Edited Test',
         ));
 
         $client->submit($form);
         $crawler = $client->followRedirect();
-
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
+        $this->assertGreaterThan(0, $crawler->filter('[value="Edited Test"]')->count(), 'Failed to find edited element');
 
         // Delete the entity
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
-
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
+        $this->assertNotRegExp('/Edited Test/', $client->getResponse()->getContent());
     }
 
-    */
 }
