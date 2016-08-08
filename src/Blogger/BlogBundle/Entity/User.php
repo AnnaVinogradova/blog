@@ -35,6 +35,11 @@ class User extends BaseUser
     protected $todolists;
 
     /**
+     * @ORM\OneToMany(targetEntity="Blogger\MapBundle\Entity\Marker", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $markers;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
      */
     private $requests;

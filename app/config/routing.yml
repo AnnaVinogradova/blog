@@ -1,3 +1,11 @@
+blogger_map_marker:
+    resource: "@BloggerMapBundle/Controller/MarkerController.php"
+    type:     annotation
+
+blogger_map:
+    resource: "@BloggerMapBundle/Resources/config/routing.yml"
+    prefix:   /
+
 blogger_tasklist:
     resource: "@BloggerTodolistBundle/Controller/"
     type:     annotation
