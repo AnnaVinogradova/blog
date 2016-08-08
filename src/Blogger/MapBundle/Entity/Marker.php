@@ -43,12 +43,6 @@ class Marker
     private $lng;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="markers")
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     */
-    private $user;
-
-    /**
      * @ORM\ManyToOne(targetEntity="Map", inversedBy="markers")
      * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
      */
