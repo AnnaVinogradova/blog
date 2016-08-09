@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Map Resolvers</h3>   
+        <ul>
+            <li>
+                <a href="{{ path('mapresolver_new', { 'id': id }) }}">Add a new resolver</a>
+            </li>
+        </ul>
+        <div id="content">
+            {% for mapResolver in mapResolvers %}
+                    User: {{ mapResolver.user }}
+                    <td>
+                        <ul>
+                            <li>
+                                <a href="{{ path('mapresolver_show', { 'id': mapResolver.id }) }}">show</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        </div>
+
+{% endblock %}

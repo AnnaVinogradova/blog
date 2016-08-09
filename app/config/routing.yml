@@ -1,3 +1,7 @@
+blogger_map_map_resolver:
+    resource: "@BloggerMapBundle/Controller/MapResolverController.php"
+    type:     annotation
+
 blogger_map_marker:
     resource: "@BloggerMapBundle/Controller/MarkerController.php"
     type:     annotation

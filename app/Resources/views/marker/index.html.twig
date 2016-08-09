@@ -2,31 +2,11 @@
 
 {% block body %}
     <h3>Markers</h3>
-
-    {#    {% for marker in markers %}
-            <tr>
-                <td><a href="{{ path('marker_show', { 'id': marker.id }) }}">{{ marker.id }}</a></td>
-                <td>{{ marker.title }}</td>
-                <td>{{ marker.lat }}</td>
-                <td>{{ marker.lng }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('marker_show', { 'id': marker.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('marker_edit', { 'id': marker.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-    <ul>
-        <li>
-            <a href="{{ path('marker_new') }}">Create a new entry</a>
-        </li>
-    </ul> #}
-
+        <ul>
+            <li>
+                <a href="{{ path('mapresolver_index', { 'id': id }) }}">Resolvers</a>
+            </li>
+        </ul>
     <div class="row">
         <div class="col-md-8">
             <div id="map" style="width: 100%; height: 400px;"></div>

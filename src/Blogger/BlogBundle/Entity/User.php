@@ -44,6 +44,11 @@ class User extends BaseUser
      */
     private $requests;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Blogger\MapBundle\Entity\MapResolver", mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $map_resolvers;
+
     public function addPost(Post $post)
     {
         $this->posts[] = $post;
@@ -67,9 +72,26 @@ class User extends BaseUser
         $request->setUser($this);
         return $this;
     }
-     
+    
     /**
-     * Get messages
+     * Get map_resolver
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMapResolver()
+    {
+        return $this->map_resolvers;
+    }
+ 
+    public function addMapResolver(\Blogger\MapBundle\Entity\MapResolver $request)
+    {
+        $this->map_resolvers[] = $request;
+        $request->setUser($this);
+        return $this;
+    }
+
+    /**
+     * Get posts
      *
      * @return Doctrine\Common\Collections\Collection 
      */

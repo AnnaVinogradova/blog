@@ -33,6 +33,11 @@ class Map
     private $markers;
 
     /**
+     * @ORM\OneToMany(targetEntity="MapResolver", mappedBy="map", cascade={"persist", "remove"})
+     */
+    private $map_resolvers;
+
+    /**
      * Get id
      *
      * @return int
@@ -71,7 +76,7 @@ class Map
      *
      * @param Blogger\MapBundle\Entity\Marker $marker
      */
-    public function addMarker(Task $marker)
+    public function addMarker(Marker $marker)
     {
         $this->markers[] = $marker;
         $marker->setMap($this);
@@ -91,6 +96,48 @@ class Map
     public function __construct()
     {
         $this->markers = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->map_resolvers = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+        /**
+     * Set map
+     *
+     * @param string $map
+     *
+     * @return Map
+     */
+    public function setMap($map)
+    {
+        $this->map = $map;
+
+        return $this;
+    }
+
+    /**
+     * Get todolist
+     *
+     * @return Map
+     */
+    public function getMap()
+    {
+        return $this->map;
+    }
+
+     public function addMapResolver(MapResolver $request)
+    {
+        $this->map_resolvers[] = $request;
+        $request->setMap($this);
+        return $this;
+    }
+
+    /**
+     * Get requests
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMapResolvers()
+    {
+        return $this->map_resolvers;
     }
 
 }
