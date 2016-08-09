@@ -23,6 +23,13 @@ class MapResolver
     private $id;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="status", type="boolean")
+     */
+    private $status;
+
+    /**
      * @ORM\ManyToOne(targetEntity="Map", inversedBy="resolvers")
      * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
      */
