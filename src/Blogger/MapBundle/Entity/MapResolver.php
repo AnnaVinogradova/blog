@@ -69,7 +69,7 @@ class MapResolver
     /**
      * Get map
      *
-     * @return string
+     * @return Map
      */
     public function getMap()
     {
@@ -98,6 +98,30 @@ class MapResolver
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * Set status
+     *
+     * @param boolean $status
+     *
+     * @return MapResolver
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return bool
+     */
+    public function getStatus()
+    {
+        return $this->status;
     }
 }
 

@@ -28,10 +28,16 @@ class MapResolverController extends Controller
         $map = $em->getRepository('BloggerMapBundle:Map')->findOneBy(array('id' => $id));
 
         $mapResolvers = $map->getMapResolvers();
+        $accepted = array();
+        foreach ($mapResolvers as $resolver) {
+            if($resolver->getStatus()){
+                $accepted[] = $resolver;
+            }
+        }
 
         return $this->render('mapresolver/index.html.twig', array(
             'id' => $id,
-            'mapResolvers' => $mapResolvers,
+            'mapResolvers' => $accepted,
         ));
     }
 
@@ -52,6 +58,7 @@ class MapResolverController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $mapResolver->setMap($map);
+            $mapResolver->setStatus(false);
             $em->persist($mapResolver);
             $em->flush();
 
@@ -95,6 +102,7 @@ class MapResolverController extends Controller
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $mapResolver->setStatus(true);
             $em->persist($mapResolver);
             $em->flush();
 

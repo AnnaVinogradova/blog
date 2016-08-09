@@ -74,8 +74,21 @@ class MarkerController extends Controller
             $em->flush();
         }
 
+        $mapResolvers = $user->getMapResolvers();
+        $waiting = array();
+        $accessable = array();
+        foreach ($mapResolvers as $resolver) {
+            if(! $resolver->getStatus()){
+                $waiting[] = $resolver;
+            } else {
+                $accessable[] = $resolver->getMap();
+            }
+        }
+
         return $this->render('marker/map.html.twig', array(
             'map' => $map->getId(),
+            'requests' => $waiting,
+            'accessable' => $accessable,
         ));
     }
 

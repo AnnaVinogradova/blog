@@ -3,28 +3,23 @@
 {% block body %}
     <h3>Maps</h3>
 
-    <ul>
-        <li>
-            <a href="{{ path('marker_index', { 'id': map }) }}">View my map</a>
-        </li>
-    </ul>
-    {#    {% for marker in markers %}
-            <tr>
-                <td><a href="{{ path('marker_show', { 'id': marker.id }) }}">{{ marker.id }}</a></td>
-                <td>{{ marker.title }}</td>
-                <td>{{ marker.lat }}</td>
-                <td>{{ marker.lng }}</td>
-                <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('marker_show', { 'id': marker.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('marker_edit', { 'id': marker.id }) }}">edit</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
- #}
- {% endblock %}
+    <div id="content">
+        <ul>
+           <li>
+               <a href="{{ path('marker_index', { 'id': map }) }}">View my map</a>
+           </li>
+       </ul>
+           {% for request in requests %}
+                    User {{ request.map.user }} want you to be resolver              
+                       <ul>
+                           <li>
+                               <a href="{{ path('mapresolver_edit', { 'id': request.id }) }}">Accept/Reject</a>
+                           </li>
+                       </ul>
+           {% endfor %}
+           <h3>Accessable maps:</h3>
+           {% for map in accessable %}
+                    <a href="{{ path('marker_index', { 'id': map.id }) }}">{{ map.user }}'s map</a>
+           {% endfor %}
+    </div>
+{% endblock %}

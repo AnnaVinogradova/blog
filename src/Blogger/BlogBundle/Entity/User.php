@@ -78,7 +78,7 @@ class User extends BaseUser
      *
      * @return Doctrine\Common\Collections\Collection 
      */
-    public function getMapResolver()
+    public function getMapResolvers()
     {
         return $this->map_resolvers;
     }

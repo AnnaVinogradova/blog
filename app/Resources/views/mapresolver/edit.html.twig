@@ -1,21 +1,24 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>MapResolver edit</h1>
+    <h3>MapResolver accept/reject</h3>
 
-    {{ form_start(edit_form) }}
-        {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
-    {{ form_end(edit_form) }}
-
-    <ul>
-        <li>
+    <div id="content">
+        <div class="edit-form">
+            {{ form_start(edit_form) }}
+                {{ form_widget(edit_form) }}
+                <input type="submit" value="Accept" />
+            {{ form_end(edit_form) }}
+            
             {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
+                <input type="submit" value="Reject">
             {{ form_end(delete_form) }}
-        </li>
-        <li>
-            <a href="{{ path('mapresolver_index') }}">Back to the list</a>
-        </li>
-    </ul>
+        </div>
+        
+        <ul>
+            <li>
+                <a href="{{ path('map_index') }}">Back to the list</a>
+            </li>
+        </ul>
+    </div>
 {% endblock %}
