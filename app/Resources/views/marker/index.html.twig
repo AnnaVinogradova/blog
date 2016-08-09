@@ -38,6 +38,24 @@
             </ul>
         </div>
     </div>
+
+    <div id="modalBox" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Create marker
+                </div>
+                <div class="modal-body edit-form">
+                    {{ form_start(form) }}
+                    {{ form_widget(form) }}
+                    <input type="submit" value="Save" />
+                    {{ form_end(form) }}
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
     <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
 
     <script>
@@ -48,7 +66,13 @@
         });
 
         map.addListener('dblclick', function(e){
-            prompt('Enter the title for your marker:');
+            $("#modalBox").modal('show');
+            var field = document.getElementById('marker_lat');
+            field.value = e.latLng.lat();
+            field.setAttribute('type', 'hidden');
+            field = document.getElementById('marker_lng');
+            field.value = e.latLng.lng();
+            field.setAttribute('type', 'hidden');
         });
 
         var infowindow = new google.maps.InfoWindow();

@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\MapBundle\Entity\Marker;
+use Blogger\MapBundle\Entity\Map;
 use Blogger\MapBundle\Form\MarkerType;
 
 /**
@@ -19,34 +20,83 @@ class MarkerController extends Controller
     /**
      * Lists all Marker entities.
      *
-     * @Route("/", name="marker_index")
-     * @Method("GET")
+     * @Route("/{id}", name="marker_index")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function indexAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $markers = $em->getRepository('BloggerMapBundle:Marker')->findAll();
+        $map = $em->getRepository('BloggerMapBundle:Map')->findOneBy(array('id' => $id));
+        $markers = $map->getMarkers();
 
-        return $this->render('marker/index.html.twig', array(
-            'markers' => $markers,
-        ));
-    }
-
-    /**
-     * Creates a new Marker entity.
-     *
-     * @Route("/new", name="marker_new")
-     * @Method({"GET", "POST"})
-     */
-    public function newAction(Request $request)
-    {
         $marker = new Marker();
         $form = $this->createForm('Blogger\MapBundle\Form\MarkerType', $marker);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $marker->setMap($map);
+            $em->persist($marker);
+            $em->flush();
+
+            return $this->render('marker/index.html.twig', array(
+                'id' => $id,
+                'markers' => $markers,
+                'form' => $form->createView(),
+            ));
+        }
+
+        return $this->render('marker/index.html.twig', array(
+            'id' => $id,
+            'markers' => $markers,
+            'form' => $form->createView(),
+        ));
+    }
+
+    /**
+     * Lists all Marker entities.
+     *
+     * @Route("/", name="map_index")
+     * @Method({"GET"})
+     */
+    public function mapAction()
+    {
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+
+        $map = null;
+        if(! $map = $user->getMap()){
+            $em = $this->getDoctrine()->getManager();
+            $map = new Map();
+            $map->setUser($user);
+            $em->persist($map);
+            $em->flush();
+        }
+
+        return $this->render('marker/map.html.twig', array(
+            'map' => $map->getId(),
+        ));
+    }
+
+    /**
+     * Creates a new Marker entity.
+     *
+     * @Route("/new/{id}", name="marker_new")
+     * @Method({"GET", "POST"})
+     */
+    public function newAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $map = $em->getRepository('BloggerMapBundle:Map')->findOneBy(array('id' => $id));
+
+        $marker = new Marker();
+        $form = $this->createForm('Blogger\MapBundle\Form\MarkerType', $marker);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $marker->setMap($map);
             $em->persist($marker);
             $em->flush();
 

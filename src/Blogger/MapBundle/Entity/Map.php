@@ -41,5 +41,56 @@ class Map
     {
         return $this->id;
     }
-}
 
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return TodoList
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Add task
+     *
+     * @param Blogger\MapBundle\Entity\Marker $marker
+     */
+    public function addMarker(Task $marker)
+    {
+        $this->markers[] = $marker;
+        $marker->setMap($this);
+        return $this;
+    }
+
+    /**
+     * Get markers
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMarkers()
+    {
+        return $this->markers;
+    }
+
+    public function __construct()
+    {
+        $this->markers = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+}

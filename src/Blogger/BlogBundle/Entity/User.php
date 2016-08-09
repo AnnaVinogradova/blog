@@ -101,4 +101,15 @@ class User extends BaseUser
         $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
         $this->todolists = new \Doctrine\Common\Collections\ArrayCollection();
     }
+
+    public function getMap()
+    {
+        return $this->map;
+    }
+
+    public function addMap($map){
+        $this->map = $map;
+        $map->setUser($this);
+        return $this;
+    }
 }

@@ -129,5 +129,17 @@ class Marker
     {
         return $this->lng;
     }
+
+    public function getMap()
+    {
+        return $this->map;
+    }
+
+    public function setMap($map)
+    {
+        $this->map = $map;
+
+        return $this;
+    }
 }
 

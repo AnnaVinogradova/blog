@@ -18,7 +18,6 @@ class MarkerType extends AbstractType
             ->add('title')
             ->add('lat')
             ->add('lng')
-            ->add('user')
         ;
     }
     
