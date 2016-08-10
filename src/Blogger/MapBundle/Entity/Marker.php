@@ -3,6 +3,7 @@
 namespace Blogger\MapBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Marker
@@ -25,6 +26,7 @@ class Marker
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
+     * @Assert\NotBlank()
      */
     private $title;
 
@@ -32,6 +34,7 @@ class Marker
      * @var float
      *
      * @ORM\Column(name="lat", type="float")
+     * @Assert\NotBlank()
      */
     private $lat;
 
@@ -39,6 +42,7 @@ class Marker
      * @var float
      *
      * @ORM\Column(name="lng", type="float")
+     * @Assert\NotBlank()
      */
     private $lng;
 
