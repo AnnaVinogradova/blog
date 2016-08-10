@@ -64,8 +64,8 @@ class MapResolverController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $user = $securityContext->getToken()->getUser();
-            if($mapResolver->getUser() == $user){
-                $form->addError(new FormError("It's your own map"));
+            if($mapResolver->getUser() == $map->getUser()){
+                $form->addError(new FormError("It's an owner for map"));
             } elseif($this->getDoctrine()->getRepository('BloggerMapBundle:MapResolver')
                     ->findBy(array('map' => $map, 'user' => $mapResolver->getUser()))){
                         $form->addError(new FormError("This request already exists. Please, waiting for user's resolve"));
