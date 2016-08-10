@@ -7,7 +7,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\MapBundle\Entity\MapResolver;
+use Blogger\MapBundle\Entity\Map;
 use Blogger\MapBundle\Form\MapResolverType;
+use Symfony\Component\Form\FormError;
 
 /**
  * MapResolver controller.
@@ -17,7 +19,7 @@ use Blogger\MapBundle\Form\MapResolverType;
 class MapResolverController extends Controller
 {
     /**
-     * Lists all MapResolver entities.
+     * Lists all MapResolver entities for map.
      *
      * @Route("/map/{id}", name="mapresolver_index")
      * @Method("GET")
@@ -26,6 +28,11 @@ class MapResolverController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $map = $em->getRepository('BloggerMapBundle:Map')->findOneBy(array('id' => $id));
+
+        $securityContext = $this->container->get('security.context');
+        if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
+            return $this->render('post/access_denied.html.twig');
+        }
 
         $mapResolvers = $map->getMapResolvers();
         $accepted = array();
@@ -52,17 +59,31 @@ class MapResolverController extends Controller
         $em = $this->getDoctrine()->getManager();
         $map = $em->getRepository('BloggerMapBundle:Map')->findOneBy(array('id' => $id));
 
+        $securityContext = $this->container->get('security.context');
+        if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
+            return $this->render('post/access_denied.html.twig');
+        }
+
         $mapResolver = new MapResolver();
         $form = $this->createForm('Blogger\MapBundle\Form\MapResolverType', $mapResolver);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $mapResolver->setMap($map);
-            $mapResolver->setStatus(false);
-            $em->persist($mapResolver);
-            $em->flush();
+            $user = $securityContext->getToken()->getUser();
+            if($mapResolver->getUser() == $user){
+                $form->addError(new FormError("It's your own map"));
+            } elseif($this->getDoctrine()->getRepository('BloggerMapBundle:MapResolver')
+                    ->findBy(array('map' => $map, 'user' => $mapResolver->getUser()))){
+                        $form->addError(new FormError("This request already exists. Please, waiting for user's resolve"));
 
-            return $this->redirectToRoute('mapresolver_index', array('id' => $id));
+            } else {
+                $mapResolver->setMap($map);
+                $mapResolver->setStatus(false);
+                $em->persist($mapResolver);
+                $em->flush();
+                        
+                return $this->redirectToRoute('mapresolver_index', array('id' => $id));
+            }
         }
 
         return $this->render('mapresolver/new.html.twig', array(
@@ -80,6 +101,12 @@ class MapResolverController extends Controller
      */
     public function showAction(MapResolver $mapResolver)
     {
+        $map = $mapResolver->getMap();
+        $securityContext = $this->container->get('security.context');
+        if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
+            return $this->render('post/access_denied.html.twig');
+        }
+
         $deleteForm = $this->createDeleteForm($mapResolver);
 
         return $this->render('mapresolver/show.html.twig', array(
@@ -99,6 +126,12 @@ class MapResolverController extends Controller
         $deleteForm = $this->createDeleteForm($mapResolver);
         $editForm = $this->createForm('Blogger\MapBundle\Form\MapResolverType', $mapResolver);
         $editForm->handleRequest($request);
+
+        $map = $mapResolver->getMap();
+        $securityContext = $this->container->get('security.context');
+        if(!$map->isAccessable($securityContext, $this, Map::RQUEST_TO_RESOLVER)){
+            return $this->render('post/access_denied.html.twig');
+        }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -124,9 +157,14 @@ class MapResolverController extends Controller
      */
     public function deleteAction(Request $request, MapResolver $mapResolver)
     {
-        $id = $mapResolver->getMap()->getId();
+        $map = $mapResolver->getMap();
         $form = $this->createDeleteForm($mapResolver);
         $form->handleRequest($request);
+
+        $securityContext = $this->container->get('security.context');
+        if(!$map->isAccessable($securityContext, $this, Map::RQUEST_TO_RESOLVER)){
+            return $this->render('post/access_denied.html.twig');
+        }
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -134,7 +172,7 @@ class MapResolverController extends Controller
             $em->flush();
         }
 
-        return $this->redirectToRoute('mapresolver_index', array('id' => $id));
+        return $this->redirectToRoute('map_index');
     }
 
     /**

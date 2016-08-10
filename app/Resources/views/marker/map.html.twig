@@ -18,8 +18,10 @@
                        </ul>
            {% endfor %}
            <h3>Accessable maps:</h3>
+           <ul>
            {% for map in accessable %}
-                    <a href="{{ path('marker_index', { 'id': map.id }) }}">{{ map.user }}'s map</a>
+                   <li><a href="{{ path('marker_index', { 'id': map.id }) }}">{{ map.user }}'s map</a></li>
            {% endfor %}
+           </ul>
     </div>
 {% endblock %}

@@ -12,6 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Map
 {
+    const OWNER_ROLE = 1;
+    const RESOLVER_ROLE = 0;
+    const RQUEST_TO_RESOLVER = 2;
+
     /**
      * @var int
      *
@@ -140,4 +144,49 @@ class Map
         return $this->map_resolvers;
     }
 
+    public function isAccessable($securityContext, $context, $role){
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $context->getDoctrine()->getManager();
+            if($role == self::RESOLVER_ROLE){
+                return $this->checkAccess($user, $em); 
+            } elseif($role == self::OWNER_ROLE) {
+                return $this->checkIsCreator($user, $em);
+            } else {
+                return $this->checkResolver($user, $em); 
+            }
+        }
+        return true;
+    }
+
+    private function checkAccess($user, $em)
+    {
+        if($this->checkIsCreator($user, $em)){
+            return true;
+        }
+        return  $em->getRepository('BloggerMapBundle:MapResolver')->findBy( 
+                array('map' => $this,
+                'user' => $user,
+                'status' => true)
+                );
+    }
+
+    private function checkResolver($user, $em)
+    {
+        if($this->checkIsCreator($user, $em)){
+            return true;
+        }
+        return  $em->getRepository('BloggerMapBundle:MapResolver')->findBy( 
+                array('map' => $this,
+                'user' => $user)
+                );
+    }
+
+    private function checkIsCreator($user, $em)
+    {
+        return  $em->getRepository('BloggerMapBundle:Map')->findBy( 
+                array('id' => $this->getId(),
+                'user' => $user)
+                );
+    }
 }
