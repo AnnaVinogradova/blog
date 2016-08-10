@@ -15,6 +15,7 @@ class Map
     const OWNER_ROLE = 1;
     const RESOLVER_ROLE = 0;
     const RQUEST_TO_RESOLVER = 2;
+    const COULD_BE_RESOLVER = 3;
 
     /**
      * @var int
@@ -97,13 +98,7 @@ class Map
         return $this->markers;
     }
 
-    public function __construct()
-    {
-        $this->markers = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->map_resolvers = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-        /**
+    /**
      * Set map
      *
      * @param string $map
@@ -144,6 +139,12 @@ class Map
         return $this->map_resolvers;
     }
 
+    public function __construct()
+    {
+        $this->markers = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->map_resolvers = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
     public function isAccessable($securityContext, $context, $role){
         if(!$securityContext->isGranted('ROLE_ADMIN')){
             $user = $securityContext->getToken()->getUser();
@@ -152,8 +153,10 @@ class Map
                 return $this->checkAccess($user, $em); 
             } elseif($role == self::OWNER_ROLE) {
                 return $this->checkIsCreator($user, $em);
-            } else {
+            } elseif($role == self::RQUEST_TO_RESOLVER) {
                 return $this->checkResolver($user, $em); 
+            } else {
+                return $this->checkIsCouldBeResolver($user, $em);
             }
         }
         return true;
@@ -176,11 +179,17 @@ class Map
         if($this->checkIsCreator($user, $em)){
             return true;
         }
+        return  $this->checkIsCouldBeResolver($user, $em);
+    }
+
+    private function checkIsCouldBeResolver($user, $em)
+    {
         return  $em->getRepository('BloggerMapBundle:MapResolver')->findBy( 
                 array('map' => $this,
                 'user' => $user)
                 );
     }
+
 
     private function checkIsCreator($user, $em)
     {

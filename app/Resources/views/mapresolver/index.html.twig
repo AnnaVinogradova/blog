@@ -9,7 +9,7 @@
         </ul>
         <div id="content">
             {% for mapResolver in mapResolvers %}
-                    User: {{ mapResolver.user }}
+                    User: {{ mapResolver.user }}{% if mapResolver.status %}{% else %}, Status: Waiting, not resolver yet{% endif %}
                     <td>
                         <ul>
                             <li>

@@ -70,12 +70,12 @@ class MarkerController extends Controller
 
         if($securityContext->isGranted('ROLE_USER')){
             $user = $securityContext->getToken()->getUser();
+            $em = $this->getDoctrine()->getManager();
             $waiting = array();
             $accessable = array();
             $map = null;
 
             if(! $map = $user->getMap()){
-                $em = $this->getDoctrine()->getManager();
                 $map = new Map();
                 $map->setUser($user);
                 $em->persist($map);
@@ -91,6 +91,10 @@ class MarkerController extends Controller
                 }
             }           
 
+            if($securityContext->isGranted('ROLE_ADMIN')){
+                $accessable = $em->getRepository('BloggerMapBundle:Map')->findAll();
+            }
+           
             return $this->render('marker/map.html.twig', array(
                 'map' => $map->getId(),
                 'requests' => $waiting,

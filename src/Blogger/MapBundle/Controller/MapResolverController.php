@@ -35,16 +35,10 @@ class MapResolverController extends Controller
         }
 
         $mapResolvers = $map->getMapResolvers();
-        $accepted = array();
-        foreach ($mapResolvers as $resolver) {
-            if($resolver->getStatus()){
-                $accepted[] = $resolver;
-            }
-        }
 
         return $this->render('mapresolver/index.html.twig', array(
             'id' => $id,
-            'mapResolvers' => $accepted,
+            'mapResolvers' => $mapResolvers,
         ));
     }
 
@@ -124,22 +118,26 @@ class MapResolverController extends Controller
     public function editAction(Request $request, MapResolver $mapResolver)
     {
         $deleteForm = $this->createDeleteForm($mapResolver);
-        $editForm = $this->createForm('Blogger\MapBundle\Form\MapResolverType', $mapResolver);
+        $editForm = $this->createForm('Blogger\MapBundle\Form\AcceptMapResolverType', $mapResolver);
         $editForm->handleRequest($request);
 
         $map = $mapResolver->getMap();
         $securityContext = $this->container->get('security.context');
-        if(!$map->isAccessable($securityContext, $this, Map::RQUEST_TO_RESOLVER)){
+        if(!$map->isAccessable($securityContext, $this, Map::COULD_BE_RESOLVER)){
             return $this->render('post/access_denied.html.twig');
         }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $name = $mapResolver->getUser();
             $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository('BloggerBlogBundle:User')->findOneBy(array('username' => $name));
+            
             $mapResolver->setStatus(true);
+            $mapResolver->setUser($user);
             $em->persist($mapResolver);
             $em->flush();
 
-            return $this->redirectToRoute('mapresolver_edit', array('id' => $mapResolver->getId()));
+            return $this->redirectToRoute('map_index');
         }
 
         return $this->render('mapresolver/edit.html.twig', array(

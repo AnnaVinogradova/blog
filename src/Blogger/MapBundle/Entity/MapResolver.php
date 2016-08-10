@@ -30,7 +30,7 @@ class MapResolver
     private $status;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Map", inversedBy="resolvers")
+     * @ORM\ManyToOne(targetEntity="Map", inversedBy="map_resolvers")
      * @ORM\JoinColumn(name="map_id", referencedColumnName="id")
      */
     private $map;
@@ -79,9 +79,9 @@ class MapResolver
     /**
      * Set user
      *
-     * @param string $user
+     * @param string $User
      *
-     * @return TodoList
+     * @return MapResolver
      */
     public function setUser($user)
     {
@@ -93,7 +93,7 @@ class MapResolver
     /**
      * Get user
      *
-     * @return string
+     * @return User
      */
     public function getUser()
     {
