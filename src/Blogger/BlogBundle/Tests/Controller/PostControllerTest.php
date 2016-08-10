@@ -22,23 +22,58 @@ class PostControllerTest extends WebTestCase
         $client->submit($form,$data);
 
         // Create a new entry in the database
-        $crawler = $client->request('GET', '/post/');
+        $crawler = $client->request('GET', '/post/');        
         $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /post/");
         $crawler = $client->click($crawler->selectLink('Create a new post')->link());
+
+        //create entity with empty title
+        $form = $crawler->selectButton('Create')->form(array(
+            'post[title]'  => '',
+            'post[content]'  => 'test',
+        ));
+
+        $client->submit($form);
+        $this->assertContains('This value should not be blank.', $client->getResponse()->getContent());
+
+        //create entity with empty content
+        $form = $crawler->selectButton('Create')->form(array(
+            'post[title]'  => 'test',
+            'post[content]'  => '',
+        ));
+
+        $client->submit($form);
+        $this->assertContains('This value should not be blank.', $client->getResponse()->getContent());
+
+        //create valid entity
         $form = $crawler->selectButton('Create')->form(array(
             'post[title]'  => 'Test Post in PostControllerTest',
             'post[content]'  => 'Test content',
         ));
 
         $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check data in the show view
+        $crawler = $client->followRedirect();        
         $this->assertGreaterThan(0, $crawler->filter('h2:contains("Test Post in PostControllerTest")')->count(), 'Failed to create element');
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
 
+        //entity with empty title
+        $form = $crawler->selectButton('Edit')->form(array(
+            'post[title]'  => '',
+            'post[content]'  => 'Test content',
+        ));
+        $client->submit($form);
+        $this->assertContains('This value should not be blank.', $client->getResponse()->getContent());
+
+        //entity with empty content
+        $form = $crawler->selectButton('Edit')->form(array(
+            'post[title]'  => 'test',
+            'post[content]'  => '',
+        ));
+        $client->submit($form);
+        $this->assertContains('This value should not be blank.', $client->getResponse()->getContent());
+
+        //valid values
         $form = $crawler->selectButton('Edit')->form(array(
             'post[title]'  => 'Edited Test Post in PostControllerTest',
             'post[content]'  => 'Test content',
@@ -47,7 +82,6 @@ class PostControllerTest extends WebTestCase
         $client->submit($form);
         $crawler = $client->followRedirect();
 
-        // Check the element contains an attribute with value equals "Foo"
         $this->assertGreaterThan(0, $crawler->filter('h2:contains("Edited Test Post in PostControllerTest")')->count(), 'Failed to update Post');
 
         // Delete the entity

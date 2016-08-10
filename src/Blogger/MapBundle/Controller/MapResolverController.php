@@ -70,14 +70,14 @@ class MapResolverController extends Controller
                     ->findBy(array('map' => $map, 'user' => $mapResolver->getUser()))){
                         $form->addError(new FormError("This request already exists. Please, waiting for user's resolve"));
 
-            } else {
-                $mapResolver->setMap($map);
-                $mapResolver->setStatus(false);
-                $em->persist($mapResolver);
-                $em->flush();
-                        
-                return $this->redirectToRoute('mapresolver_index', array('id' => $id));
-            }
+                } else {
+                    $mapResolver->setMap($map);
+                    $mapResolver->setStatus(false);
+                    $em->persist($mapResolver);
+                    $em->flush();
+                            
+                    return $this->redirectToRoute('mapresolver_index', array('id' => $id));
+                }
         }
 
         return $this->render('mapresolver/new.html.twig', array(
