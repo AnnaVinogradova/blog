@@ -15,11 +15,11 @@ class TodoListControllerTest extends WebTestCase
         // Create a new client to browse the application
         $client = static::createClient();
 
-        $crawler = $client->request('GET', '/login');
-        $buttonCrawlerNode = $crawler->selectButton('Log in');
-        $form = $buttonCrawlerNode->form();
-        $data = array('_username' => self::USERNAME,'_password' => self::PASSWORD);
-        $client->submit($form,$data);
+        // get access to list without authorization
+        $crawler = $client->request('GET', '/todolist/');
+        $this->assertContains('Access denied', $client->getResponse()->getContent());
+
+        $this->getLogin($client);
 
         // Create a new entry in the database
         $crawler = $client->request('GET', '/todolist/');
@@ -27,7 +27,12 @@ class TodoListControllerTest extends WebTestCase
         $link = $crawler->selectLink('Create a new list')->link();
         $crawler = $client->click($link);
 
-        // creata entity with empty name
+        // Check create page without authorization
+        $link = $this->checkLinkWithoutAuthorization($client);
+
+        $crawler = $client->request('GET', $link);
+
+        // create entity with empty name
         $form = $crawler->selectButton('Create')->form(array(
             'todo_list[name]'  => '',
         ));
@@ -44,6 +49,11 @@ class TodoListControllerTest extends WebTestCase
 
         // Edit the entity
         $crawler = $client->click($crawler->selectLink('Edit')->link());
+
+        // Check edit page without authorization
+        $link = $this->checkLinkWithoutAuthorization($client);
+
+        $crawler = $client->request('GET', $link);
 
         //empty entity for edit
         $form = $crawler->selectButton('Edit')->form(array(
@@ -65,6 +75,31 @@ class TodoListControllerTest extends WebTestCase
         $client->submit($crawler->selectButton('Delete')->form());
         $crawler = $client->followRedirect();
         $this->assertNotRegExp('/Edited Test/', $client->getResponse()->getContent());
+    }
+
+    private function getLogin($client)
+    {
+        $crawler = $client->request('GET', '/login');
+        $buttonCrawlerNode = $crawler->selectButton('Log in');
+        $form = $buttonCrawlerNode->form();
+        $data = array('_username' => self::USERNAME,'_password' => self::PASSWORD);
+        $client->submit($form,$data);
+    }
+
+    private function getLogout($client)
+    {
+        $client->request('GET', '/logout');
+    }
+
+    private function checkLinkWithoutAuthorization($client)
+    {
+        $link = $client->getRequest()->getUri();
+        $this->getLogout($client);
+        $crawler = $client->request('GET', $link);
+        $this->assertContains('Access denied', $client->getResponse()->getContent());
+        $this->getLogin($client);
+
+        return $link;
     }
 
 }
