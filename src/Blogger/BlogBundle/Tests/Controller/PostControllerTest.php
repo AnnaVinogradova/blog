@@ -131,5 +131,4 @@ class PostControllerTest extends WebTestCase
         return $link;
     }
 
-
 }
