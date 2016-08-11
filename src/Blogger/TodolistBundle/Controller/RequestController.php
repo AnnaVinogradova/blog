@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request as HTTPRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Blogger\TodolistBundle\Entity\Request;
 use Blogger\TodolistBundle\Entity\TodoList;
 use Blogger\TodolistBundle\Form\RequestType;
@@ -33,7 +34,7 @@ class RequestController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-                return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $requests = $todoList->getRequests();
@@ -61,7 +62,7 @@ class RequestController extends Controller
                 'requests' => $requests,
             ));
         }
-        return $this->render('post/access_denied.html.twig');
+        throw new AccessDeniedException();
     }
 
     /**
@@ -79,7 +80,7 @@ class RequestController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
         }
 
         $request = new Request();
@@ -124,7 +125,7 @@ class RequestController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($request);
@@ -165,7 +166,7 @@ class RequestController extends Controller
                 'delete_form' => $deleteForm->createView(),
             ));
         }
-        return $this->render('post/access_denied.html.twig');
+        throw new AccessDeniedException();
     }
 
     /**
@@ -182,7 +183,7 @@ class RequestController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$list->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-            return $this->render('post/access_denied.html.twig'); 
+            throw new AccessDeniedException(); 
         }
       
         if ($form->isSubmitted() && $form->isValid()) {

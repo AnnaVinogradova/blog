@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Blogger\MapBundle\Entity\Marker;
 use Blogger\MapBundle\Entity\Map;
 use Blogger\MapBundle\Form\MarkerType;
@@ -30,7 +31,7 @@ class MarkerController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::RESOLVER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $markers = $map->getMarkers();
@@ -101,7 +102,7 @@ class MarkerController extends Controller
                 'accessable' => $accessable,
             ));
         } else {
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
     }
 

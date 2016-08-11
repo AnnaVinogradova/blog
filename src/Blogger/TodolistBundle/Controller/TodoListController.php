@@ -4,6 +4,7 @@ namespace Blogger\TodolistBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\TodolistBundle\Entity\TodoList;
@@ -43,7 +44,7 @@ class TodoListController extends Controller
                     'accessable' => $accessable
                 ));
             } else {
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
             }
         }
         
@@ -84,7 +85,7 @@ class TodoListController extends Controller
                 'form' => $form->createView(),
             ));
         } else {
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
             }
     }
 
@@ -98,7 +99,7 @@ class TodoListController extends Controller
     {
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($todoList);
@@ -123,7 +124,7 @@ class TodoListController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -154,7 +155,7 @@ class TodoListController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::CREATOR_ROLE)){
-            return $this->render('post/access_denied.html.twig'); 
+            throw new AccessDeniedException(); 
         }
 
         if ($form->isSubmitted() && $form->isValid()) {

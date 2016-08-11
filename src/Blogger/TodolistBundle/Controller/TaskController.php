@@ -4,6 +4,7 @@ namespace Blogger\TodolistBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\TodolistBundle\Entity\Task;
@@ -32,7 +33,7 @@ class TaskController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
-            return $this->render('post/access_denied.html.twig'); 
+            throw new AccessDeniedException();
         }
 
         $task = new Task();
@@ -65,7 +66,7 @@ class TaskController extends Controller
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
-            return $this->render('post/access_denied.html.twig'); 
+            throw new AccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($task);
@@ -88,7 +89,7 @@ class TaskController extends Controller
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($task);
@@ -123,7 +124,7 @@ class TaskController extends Controller
         $todoList = $task->getTodolist();
         $securityContext = $this->container->get('security.context');
         if(!$todoList->isAccessable($securityContext, $this, TodoList::USER_ROLE)){
-            return $this->render('post/access_denied.html.twig'); 
+            throw new AccessDeniedException();
         }
 
         $id = $todoList->getId();

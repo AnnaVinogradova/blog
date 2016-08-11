@@ -17,7 +17,8 @@ class TodoListControllerTest extends WebTestCase
 
         // get access to list without authorization
         $crawler = $client->request('GET', '/todolist/');
-        $this->assertContains('Access denied', $client->getResponse()->getContent());
+        $crawler = $client->followRedirect();
+        $this->assertContains('login', $client->getRequest()->getUri());
 
         $this->getLogin($client);
 
@@ -96,7 +97,8 @@ class TodoListControllerTest extends WebTestCase
         $link = $client->getRequest()->getUri();
         $this->getLogout($client);
         $crawler = $client->request('GET', $link);
-        $this->assertContains('Access denied', $client->getResponse()->getContent());
+        $crawler = $client->followRedirect();
+        $this->assertContains('login', $client->getRequest()->getUri());
         $this->getLogin($client);
 
         return $link;

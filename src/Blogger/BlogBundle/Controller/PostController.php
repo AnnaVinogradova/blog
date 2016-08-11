@@ -4,6 +4,7 @@ namespace Blogger\BlogBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Blogger\BlogBundle\Entity\Post;
 use Blogger\BlogBundle\Form\PostType;
@@ -53,7 +54,7 @@ class PostController extends Controller
             ));
             }
         } else {
-            return $this->render('post/access_denied.html.twig');
+             throw new AccessDeniedException();
         }
     }
 
@@ -102,7 +103,7 @@ class PostController extends Controller
                 'form' => $form->createView(),
             ));
         } else {
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
     }
 
@@ -117,7 +118,7 @@ class PostController extends Controller
 
         if(! $securityContext->isGranted('ROLE_ADMIN')){
             if(! $this->checkAccess($post->getId())){
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
             }
         }
 
@@ -141,7 +142,7 @@ class PostController extends Controller
         $fileName = $post->getImage();
         if(! $securityContext->isGranted('ROLE_ADMIN')){
             if(! $this->checkAccess($post->getId())){
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
             }
         }
 
@@ -185,7 +186,7 @@ class PostController extends Controller
 
         if(! $securityContext->isGranted('ROLE_ADMIN')){
             if(! $this->checkAccess($post->getId())){
-                return $this->render('post/access_denied.html.twig');
+                throw new AccessDeniedException();
             }
         }
 

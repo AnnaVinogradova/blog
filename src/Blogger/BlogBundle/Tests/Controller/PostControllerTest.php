@@ -17,7 +17,8 @@ class PostControllerTest extends WebTestCase
 
         // get access to post without authorization
         $crawler = $client->request('GET', '/post/');
-        $this->assertContains('Access denied', $client->getResponse()->getContent());
+        $crawler = $client->followRedirect();
+        $this->assertContains('login', $client->getRequest()->getUri());
 
         $this->getLogin($client);
 
@@ -124,8 +125,9 @@ class PostControllerTest extends WebTestCase
     {
         $link = $client->getRequest()->getUri();
         $this->getLogout($client);
-        $crawler = $client->request('GET', $link);
-        $this->assertContains('Access denied', $client->getResponse()->getContent());
+        $crawler = $client->request('GET', $link);        
+        $crawler = $client->followRedirect();
+        $this->assertContains('login', $client->getRequest()->getUri());
         $this->getLogin($client);
 
         return $link;

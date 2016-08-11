@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Blogger\MapBundle\Entity\MapResolver;
 use Blogger\MapBundle\Entity\Map;
 use Blogger\MapBundle\Form\MapResolverType;
@@ -31,7 +32,7 @@ class MapResolverController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $mapResolvers = $map->getMapResolvers();
@@ -55,7 +56,7 @@ class MapResolverController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $mapResolver = new MapResolver();
@@ -98,7 +99,7 @@ class MapResolverController extends Controller
         $map = $mapResolver->getMap();
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::OWNER_ROLE)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         $deleteForm = $this->createDeleteForm($mapResolver);
@@ -124,7 +125,7 @@ class MapResolverController extends Controller
         $map = $mapResolver->getMap();
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::COULD_BE_RESOLVER)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
@@ -161,7 +162,7 @@ class MapResolverController extends Controller
 
         $securityContext = $this->container->get('security.context');
         if(!$map->isAccessable($securityContext, $this, Map::RQUEST_TO_RESOLVER)){
-            return $this->render('post/access_denied.html.twig');
+            throw new AccessDeniedException();
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
