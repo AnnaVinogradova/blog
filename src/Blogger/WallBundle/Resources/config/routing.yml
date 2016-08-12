@@ -1,3 +1,0 @@
-blogger_wall_homepage:
-    path:     /
-    defaults: { _controller: BloggerWallBundle:Default:index }

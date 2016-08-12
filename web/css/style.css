@@ -126,3 +126,14 @@ legend {
     font-style: italic;
     color: gray;
 }
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.cross input {
+    color: #f00;
+    float: right;
+    border-radius: 50%;
+    border: 1px solid #f00;
+}

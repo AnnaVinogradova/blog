@@ -16,10 +16,7 @@ class WallPostType extends AbstractType
     {
         $builder
             ->add('content')
-            ->add('date', 'datetime')
             ->add('img')
-            ->add('user')
-            ->add('wall')
         ;
     }
     

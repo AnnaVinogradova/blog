@@ -43,10 +43,78 @@ class WallPostController extends Controller
                     array('wall' => $wall,
                     'user' => $user)
                 );
-                $allPosts = $wall->getPosts();                
+                $allPosts = $wall->getPosts();
+                foreach ($allPosts as $post) {
+                    $post->form = $this->createDeleteForm($post)->createView();
+                }
             }           
            
             return $this->render('wallpost/index.html.twig', array(
+                'wall_name' => 'Your wall',
+                'id' => $wall->getId(),
+                'all_posts' => $allPosts,
+                'your_posts' => $yourPosts
+            ));
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * Lists all WallPost entities.
+     *
+     * @Route("/users", name="wall_users")
+     * @Method("GET")
+     */
+    public function userWallAction()
+    {
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $em = $this->getDoctrine()->getManager();
+            $allWalls = $em->getRepository('BloggerWallBundle:Wall')->findAll();                          
+           
+            return $this->render('wallpost/walls.html.twig', array(
+                'walls' => $allWalls
+            ));
+        } else {
+            throw new AccessDeniedException();
+        }
+    }
+
+    /**
+     * Lists all WallPost entities.
+     *
+     * @Route("/{id}", name="wall_index")
+     * @Method("GET")
+     */
+    public function wallAction($id)
+    {
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $this->getDoctrine()->getManager();
+            $yourPosts = array();
+            $allPosts = array();
+
+            $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
+                    array('id' => $id)
+                );
+            
+            if($user == $wall->getUser()){
+                return $this->redirectToRoute('wallpost_index');
+            }
+
+            $yourPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
+                    array('wall' => $wall,
+                    'user' => $user)
+                );
+
+            $allPosts = $wall->getPosts();                
+          
+           
+            return $this->render('wallpost/index.html.twig', array(
+                'wall_name' => $wall->getUser() . "'s wall",
+                'id' => $wall->getId(),
                 'all_posts' => $allPosts,
                 'your_posts' => $yourPosts,
             ));
@@ -58,24 +126,36 @@ class WallPostController extends Controller
     /**
      * Creates a new WallPost entity.
      *
-     * @Route("/new", name="wallpost_new")
+     * @Route("/{id}/new", name="wallpost_new")
      * @Method({"GET", "POST"})
      */
-    public function newAction(Request $request)
+    public function newAction(Request $request, $id)
     {
+        $em = $this->getDoctrine()->getManager();
+        $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
+                    array('id' => $id)
+                );
+
         $wallPost = new WallPost();
         $form = $this->createForm('Blogger\WallBundle\Form\WallPostType', $wallPost);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $securityContext = $this->container->get('security.context');
+            $user = $securityContext->getToken()->getUser();
+
+            
+            $wallPost->setWall($wall);
+            $wallPost->setUser($user);
+
             $em->persist($wallPost);
             $em->flush();
 
-            return $this->redirectToRoute('wallpost_show', array('id' => $wallPost->getId()));
+            return $this->redirectToRoute('wall_index', array('id' => $id));
         }
 
         return $this->render('wallpost/new.html.twig', array(
+            'id' => $id,
             'wallPost' => $wallPost,
             'form' => $form->createView(),
         ));

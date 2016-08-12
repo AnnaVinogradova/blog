@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Choose wall to left post</h3>
+    <div id="content" class="container">
+    	{% for wall in walls %}
+            <li>
+            	<a href="{{ path('wall_index', { 'id': wall.id }) }}">{{ wall.user }}'s wall</a>
+            </li>
+        {% endfor %}
+    </div>
+{% endblock %}

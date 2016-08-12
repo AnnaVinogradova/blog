@@ -161,6 +161,18 @@ class WallPost
         return $this->user;
     }
 
+    public function setWall($wall)
+    {
+        $this->wall = $wall;
+
+        return $this;
+    }
+
+    public function getWall()
+    {
+        return $this->wall;
+    }
+
     public function __construct()
     {
         $this->setDate(new \DateTime());

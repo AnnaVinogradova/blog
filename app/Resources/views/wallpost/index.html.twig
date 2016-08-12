@@ -1,27 +1,68 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h3>Wall</h3>
+    <h3>{{wall_name}}</h3>
         <ul>
             <li>
-                <a href="{{ path('wallpost_new') }}">Create a new post</a>
+                <a href="{{ path('wallpost_new', {id: id}) }}">Create a new post</a>
+            </li>
+            <li>
+                <a href="{{ path('wall_users') }}">Write post on User's walls</a>
             </li>
         </ul>
-
-        <ul>
-            {% for wallPost in all_posts %}
-                <li class="row one-wall-post">
-                    <div class="col-xs-2 user-border">
-                        <span>
-                            {{ wallPost.user }}
-                        </span>
+        <div class="container">
+            <div class="row">
+                <div class="tabs">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a href="#tab-1" data-toggle="tab">All Posts</a></li>
+                            <li><a href="#tab-2" data-toggle="tab">My Posts</a></li>   
+                    </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade in active" id="tab-1">
+                                <ul>
+                                    {% for wallPost in all_posts %}
+                                        <li class="row one-wall-post">
+                                            <div class="col-xs-2 user-border">
+                                                <span>
+                                                    {{ wallPost.user }}
+                                                </span>
+                                            </div>
+                                            <div class="col-xs-9 wall-post">
+                                            {% if wall_name == "Your wall" %}
+                                                <span class="cross">
+                                                    {{ form_start(wallPost.form) }}
+                                                        <input type="submit" value="X">
+                                                    {{ form_end(wallPost.form) }}
+                                                </span>
+                                            {% endif %}
+                                                {{ wallPost.content }}
+                                                {% if wallPost.date %}<div class="date">{{ wallPost.date|date('Y-m-d H:i:s') }}</div>{% endif %}
+                                                {{ wallPost.img }}
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade" id="tab-2">
+                                <ul>
+                                    {% for wallPost in your_posts %}
+                                            <li class="row one-wall-post">
+                                                <div class="col-xs-2 user-border">
+                                                    <span>
+                                                        {{ wallPost.user }}
+                                                    </span>
+                                                </div>
+                                                <div class="col-xs-9 wall-post">
+                                                    {{ wallPost.content }}
+                                                    {% if wallPost.date %}<div class="date">{{ wallPost.date|date('Y-m-d H:i:s') }}</div>{% endif %}
+                                                    {{ wallPost.img }}
+                                                </div>
+                                            </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-xs-9 wall-post">
-                        {{ wallPost.content }}
-                        {% if wallPost.date %}<div class="date">{{ wallPost.date|date('Y-m-d H:i:s') }}</div>{% endif %}
-                        {{ wallPost.img }}
-                    </div>
-                <li>
-            {% endfor %}
-        </ul>
+                </div>
+        </div>
 {% endblock %}
