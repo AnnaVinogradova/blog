@@ -40,12 +40,13 @@ class WallPostController extends Controller
                 $em->persist($wall);
                 $em->flush();
             } else {
-                $yourPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
+                $repo = $em->getRepository('BloggerWallBundle:WallPost');
+                $yourPosts = $repo->findBy( 
                     array('wall' => $wall,
                     'user' => $user),
                     array('date' => 'DESC')
                 );
-                $allPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
+                $allPosts = $repo->findBy( 
                     array('wall' => $wall),
                     array('date' => 'DESC')
                 );
@@ -116,8 +117,7 @@ class WallPostController extends Controller
                     array('date' => 'DESC')
                 );
             $allPosts = $repo->findBy( 
-                    array('wall' => $wall,
-                    'user' => $user),
+                    array('wall' => $wall),
                     array('date' => 'DESC')
                 );                
           
