@@ -1,3 +1,7 @@
+blogger_wall:
+    resource: "@BloggerWallBundle/Resources/config/routing.yml"
+    prefix:   /
+
 blogger_map_map_resolver:
     resource: "@BloggerMapBundle/Controller/MapResolverController.php"
     type:     annotation

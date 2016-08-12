@@ -22,11 +22,8 @@ class PostController extends Controller
     public function indexAction()
     {
         $securityContext = $this->container->get('security.context');
-        $em = $this->getDoctrine()->getManager();
-        $user = $securityContext->getToken()->getUser();
 
         if($securityContext->isGranted('ROLE_USER')){
-            $securityContext = $this->container->get('security.context');
             $em = $this->getDoctrine()->getManager();
             $user = $securityContext->getToken()->getUser();
 
