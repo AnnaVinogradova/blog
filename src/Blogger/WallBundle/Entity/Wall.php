@@ -42,5 +42,56 @@ class Wall
     {
         return $this->id;
     }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return TodoList
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Add post
+     *
+     * @param Blogger\WallBundle\Entity\WallPost $post
+     */
+    public function addPost(WallPost $post)
+    {
+        $this->posts[] = $post;
+        $post->setWall($this);
+        return $this;
+    }
+
+    /**
+     * Get posts
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+        public function __construct()
+    {
+        $this->posts = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 }
 

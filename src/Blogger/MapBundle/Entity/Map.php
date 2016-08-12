@@ -77,7 +77,7 @@ class Map
     }
 
     /**
-     * Add task
+     * Add marker
      *
      * @param Blogger\MapBundle\Entity\Marker $marker
      */

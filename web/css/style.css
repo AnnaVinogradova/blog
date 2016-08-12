@@ -41,7 +41,7 @@ legend {
         font-style: italic;
     }
 
-#content {
+#content, .wall-post {
     padding: 30px;
     margin-left: 20px;
     background: #EEEDE3;
@@ -103,4 +103,26 @@ legend {
 
 .item li:first-child {
     margin-left: -20px;
+}
+
+.user-border {
+    margin-top: 10px;
+}
+
+    .user-border span {
+        border-radius: 5px;
+        border: 1px double gray;
+        padding: 5px;
+        font-size: 1.8em;
+        color: gray;
+    }
+
+.one-wall-post {
+    margin-bottom: 20px;
+}
+
+.date {
+    float: right;
+    font-style: italic;
+    color: gray;
 }

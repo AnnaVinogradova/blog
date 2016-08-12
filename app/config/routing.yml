@@ -1,3 +1,7 @@
+blogger_wall_wall_post:
+    resource: "@BloggerWallBundle/Controller/WallPostController.php"
+    type:     annotation
+
 blogger_wall:
     resource: "@BloggerWallBundle/Resources/config/routing.yml"
     prefix:   /

@@ -40,6 +40,11 @@ class User extends BaseUser
     protected $map;
 
     /**
+     * @ORM\OneToOne(targetEntity="Blogger\WallBundle\Entity\Wall", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $wall;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
      */
     private $requests;
@@ -132,6 +137,17 @@ class User extends BaseUser
     public function addMap($map){
         $this->map = $map;
         $map->setUser($this);
+        return $this;
+    }
+
+    public function getWall()
+    {
+        return $this->wall;
+    }
+
+    public function addWall($wall){
+        $this->wall = $wall;
+        $wall->setUser($this);
         return $this;
     }
 }

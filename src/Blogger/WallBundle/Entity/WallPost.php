@@ -22,7 +22,7 @@ class WallPost
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="wall")
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="wall")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -36,7 +36,7 @@ class WallPost
     /**
      * @var string
      *
-     * @ORM\Column(name="content", type="string", length=255)
+     * @ORM\Column(name="content", type="text")
      */
     private $content;
 
@@ -135,5 +135,34 @@ class WallPost
     public function getImg()
     {
         return $this->img;
+    }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return WallPost
+     */
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    public function __construct()
+    {
+        $this->setDate(new \DateTime());
     }
 }
