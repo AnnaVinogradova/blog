@@ -62,3 +62,13 @@ For login/register part can use any Bundles (using composer)
 * Write functional to add marker (lat, lng) on google maps:
 	* user or his resolver can add marker (tag) on google maps with some text (window popup)
 	* user and his resovler can see all added markers on map in menu after login
+
+##4
+
+* Every user has own wall, which contains:
+  * all posts tab
+  * own posts tab
+
+* Users can add posts on every wall (Post can contain one image)
+
+* Owner can delete posts from his wall
