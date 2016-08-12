@@ -119,8 +119,14 @@ class WallPostController extends Controller
             $allPosts = $repo->findBy( 
                     array('wall' => $wall),
                     array('date' => 'DESC')
-                );                
-          
+                ); 
+
+            if($securityContext->isGranted('ROLE_ADMIN')){                  
+                foreach ($allPosts as $post) {
+                        $post->form = $this->createDeleteForm($post)->createView();
+                    }
+            }
+
             return $this->render('wallpost/index.html.twig', array(
                 'wall_name' => $wall->getUser() . "'s wall",
                 'id' => $wall->getId(),
@@ -199,7 +205,7 @@ class WallPostController extends Controller
             $user = $securityContext->getToken()->getUser(); 
             $owner = $wallPost->getWall()->getUser();
 
-            if ($user != $owner){
+            if (($user != $owner) && (!$securityContext->isGranted('ROLE_ADMIN'))){
                 throw new AccessDeniedException();
             }
 
