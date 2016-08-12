@@ -5,6 +5,7 @@ namespace Blogger\WallBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class WallPostType extends AbstractType
 {
@@ -16,7 +17,8 @@ class WallPostType extends AbstractType
     {
         $builder
             ->add('content')
-            ->add('img')
+            ->add('img', FileType::class, array('data_class' => null, 'label' => 'You can add image to post (JPG file)','required' => false,
+            'empty_data'  => null))
         ;
     }
     

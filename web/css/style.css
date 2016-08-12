@@ -137,3 +137,7 @@ legend {
     border-radius: 50%;
     border: 1px solid #f00;
 }
+
+.wall-img img {
+    max-width: 100%;
+}

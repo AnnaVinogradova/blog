@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Blogger\WallBundle\Entity\Wall;
 use Blogger\WallBundle\Entity\WallPost;
 use Blogger\WallBundle\Form\WallPostType;
@@ -18,7 +19,7 @@ use Blogger\WallBundle\Form\WallPostType;
 class WallPostController extends Controller
 {
     /**
-     * Lists all WallPost entities.
+     * Lists all WallPost entities on user wall.
      *
      * @Route("/", name="wallpost_index")
      * @Method("GET")
@@ -61,7 +62,7 @@ class WallPostController extends Controller
     }
 
     /**
-     * Lists all WallPost entities.
+     * Lists all Walls.
      *
      * @Route("/users", name="wall_users")
      * @Method("GET")
@@ -82,7 +83,7 @@ class WallPostController extends Controller
     }
 
     /**
-     * Lists all WallPost entities.
+     * Lists all WallPost in user's wall.
      *
      * @Route("/{id}", name="wall_index")
      * @Method("GET")
@@ -95,7 +96,6 @@ class WallPostController extends Controller
             $em = $this->getDoctrine()->getManager();
             $yourPosts = array();
             $allPosts = array();
-
             $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
                     array('id' => $id)
                 );
@@ -108,10 +108,8 @@ class WallPostController extends Controller
                     array('wall' => $wall,
                     'user' => $user)
                 );
-
             $allPosts = $wall->getPosts();                
           
-           
             return $this->render('wallpost/index.html.twig', array(
                 'wall_name' => $wall->getUser() . "'s wall",
                 'id' => $wall->getId(),
@@ -131,77 +129,47 @@ class WallPostController extends Controller
      */
     public function newAction(Request $request, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
-                    array('id' => $id)
-                );
-
-        $wallPost = new WallPost();
-        $form = $this->createForm('Blogger\WallBundle\Form\WallPostType', $wallPost);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $securityContext = $this->container->get('security.context');
-            $user = $securityContext->getToken()->getUser();
-
-            
-            $wallPost->setWall($wall);
-            $wallPost->setUser($user);
-
-            $em->persist($wallPost);
-            $em->flush();
-
-            return $this->redirectToRoute('wall_index', array('id' => $id));
-        }
-
-        return $this->render('wallpost/new.html.twig', array(
-            'id' => $id,
-            'wallPost' => $wallPost,
-            'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a WallPost entity.
-     *
-     * @Route("/{id}", name="wallpost_show")
-     * @Method("GET")
-     */
-    public function showAction(WallPost $wallPost)
-    {
-        $deleteForm = $this->createDeleteForm($wallPost);
-
-        return $this->render('wallpost/show.html.twig', array(
-            'wallPost' => $wallPost,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Displays a form to edit an existing WallPost entity.
-     *
-     * @Route("/{id}/edit", name="wallpost_edit")
-     * @Method({"GET", "POST"})
-     */
-    public function editAction(Request $request, WallPost $wallPost)
-    {
-        $deleteForm = $this->createDeleteForm($wallPost);
-        $editForm = $this->createForm('Blogger\WallBundle\Form\WallPostType', $wallPost);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
             $em = $this->getDoctrine()->getManager();
-            $em->persist($wallPost);
-            $em->flush();
+            $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
+                        array('id' => $id)
+                    );
 
-            return $this->redirectToRoute('wallpost_edit', array('id' => $wallPost->getId()));
+            $wallPost = new WallPost();
+            $form = $this->createForm('Blogger\WallBundle\Form\WallPostType', $wallPost);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $user = $securityContext->getToken()->getUser();            
+                $wallPost->setWall($wall);
+                $wallPost->setUser($user);
+                $file = $wallPost->getImg();
+                    
+                    if($file != null){
+                        $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+                        $file->move(
+                            $this->getParameter('post_directory'),
+                            $fileName
+                        );
+                        $wallPost->setImg($fileName);
+                    }
+
+                $em->persist($wallPost);
+                $em->flush();
+
+                return $this->redirectToRoute('wall_index', array('id' => $id));
+            }
+
+            return $this->render('wallpost/new.html.twig', array(
+                'id' => $id,
+                'wallPost' => $wallPost,
+                'form' => $form->createView(),
+            ));
+        } else {
+            throw new AccessDeniedException();
         }
-
-        return $this->render('wallpost/edit.html.twig', array(
-            'wallPost' => $wallPost,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
     }
 
     /**

@@ -22,7 +22,7 @@ class WallPost
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="wall")
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="wall_posts")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
      */
     private $user;
@@ -50,7 +50,7 @@ class WallPost
     /**
      * @var string
      *
-     * @ORM\Column(name="img", type="string", length=255)
+     * @ORM\Column(name="img", type="string", length=255, nullable=true)
      */
     private $img;
 

@@ -36,8 +36,10 @@
                                                 </span>
                                             {% endif %}
                                                 {{ wallPost.content }}
+                                                {% if wallPost.img %}<div class="wall-img">
+                                                    Image:<br><img src="{{ asset(['images/', wallPost.img]|join) }}" />
+                                                </div>{% endif %}
                                                 {% if wallPost.date %}<div class="date">{{ wallPost.date|date('Y-m-d H:i:s') }}</div>{% endif %}
-                                                {{ wallPost.img }}
                                             </div>
                                         </li>
                                     {% endfor %}
@@ -54,8 +56,10 @@
                                                 </div>
                                                 <div class="col-xs-9 wall-post">
                                                     {{ wallPost.content }}
+                                                    {% if wallPost.img %}<div class="wall-img">
+                                                    Image:<br><img src="{{ asset(['images/', wallPost.img]|join) }}" />
+                                                    </div>{% endif %}
                                                     {% if wallPost.date %}<div class="date">{{ wallPost.date|date('Y-m-d H:i:s') }}</div>{% endif %}
-                                                    {{ wallPost.img }}
                                                 </div>
                                             </li>
                                     {% endfor %}

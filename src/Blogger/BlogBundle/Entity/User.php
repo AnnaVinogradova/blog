@@ -45,6 +45,11 @@ class User extends BaseUser
     protected $wall;
 
     /**
+     * @ORM\OneTomany(targetEntity="Blogger\WallBundle\Entity\WallPost", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $wall_posts;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
      */
     private $requests;
