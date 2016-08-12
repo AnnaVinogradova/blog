@@ -3,6 +3,7 @@
 namespace Blogger\WallBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * WallPost
@@ -37,6 +38,7 @@ class WallPost
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     * @Assert\NotBlank()
      */
     private $content;
 
@@ -51,6 +53,7 @@ class WallPost
      * @var string
      *
      * @ORM\Column(name="img", type="string", length=255, nullable=true)
+     * @Assert\File(mimeTypes={ "image/jpeg" })
      */
     private $img;
 

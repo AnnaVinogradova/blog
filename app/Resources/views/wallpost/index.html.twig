@@ -24,7 +24,7 @@
                                         <li class="row one-wall-post">
                                             <div class="col-xs-2 user-border">
                                                 <span>
-                                                    {{ wallPost.user }}
+                                                    <a href="{{ path('wall_index', { 'id': wallPost.user.wall.id }) }}">{{ wallPost.user }}</a>
                                                 </span>
                                             </div>
                                             <div class="col-xs-9 wall-post">

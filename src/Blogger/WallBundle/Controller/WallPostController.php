@@ -42,9 +42,14 @@ class WallPostController extends Controller
             } else {
                 $yourPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
                     array('wall' => $wall,
-                    'user' => $user)
+                    'user' => $user),
+                    array('date' => 'DESC')
                 );
-                $allPosts = $wall->getPosts();
+                $allPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
+                    array('wall' => $wall),
+                    array('date' => 'DESC')
+                );
+
                 foreach ($allPosts as $post) {
                     $post->form = $this->createDeleteForm($post)->createView();
                 }
@@ -104,11 +109,17 @@ class WallPostController extends Controller
                 return $this->redirectToRoute('wallpost_index');
             }
 
-            $yourPosts = $em->getRepository('BloggerWallBundle:WallPost')->findBy( 
+            $repo =  $em->getRepository('BloggerWallBundle:WallPost');
+            $yourPosts =$repo->findBy( 
                     array('wall' => $wall,
-                    'user' => $user)
+                    'user' => $user),
+                    array('date' => 'DESC')
                 );
-            $allPosts = $wall->getPosts();                
+            $allPosts = $repo->findBy( 
+                    array('wall' => $wall,
+                    'user' => $user),
+                    array('date' => 'DESC')
+                );                
           
             return $this->render('wallpost/index.html.twig', array(
                 'wall_name' => $wall->getUser() . "'s wall",
@@ -180,16 +191,28 @@ class WallPostController extends Controller
      */
     public function deleteAction(Request $request, WallPost $wallPost)
     {
-        $form = $this->createDeleteForm($wallPost);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $form = $this->createDeleteForm($wallPost);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($wallPost);
-            $em->flush();
+            $user = $securityContext->getToken()->getUser(); 
+            $owner = $wallPost->getWall()->getUser();
+
+            if ($user != $owner){
+                throw new AccessDeniedException();
+            }
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $em->remove($wallPost);
+                $em->flush();
+            }
+
+            return $this->redirectToRoute('wallpost_index');
+        } else {
+            throw new AccessDeniedException();
         }
-
-        return $this->redirectToRoute('wallpost_index');
     }
 
     /**
