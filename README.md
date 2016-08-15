@@ -72,3 +72,10 @@ For login/register part can use any Bundles (using composer)
 * Users can add posts on every wall (Post can contain one image)
 
 * Owner can delete posts from his wall
+
+##5
+
+* Add friends functional:
+  * user can send request to other user to add friend
+  * user can approve/decline friend-invitation
+  * only friends can see and write on wall of user
