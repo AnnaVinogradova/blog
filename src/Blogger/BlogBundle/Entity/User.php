@@ -55,6 +55,16 @@ class User extends BaseUser
     private $requests;
 
     /**
+     * @ORM\OneToMany(targetEntity="Blogger\WallBundle\Entity\FriendRequest", mappedBy="receiver", cascade={"persist", "remove"})
+     */
+    private $friend_requests;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Blogger\WallBundle\Entity\FriendRequest", mappedBy="sender", cascade={"persist", "remove"})
+     */
+    private $sent_requests;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\MapBundle\Entity\MapResolver", mappedBy="user", cascade={"persist", "remove"})
      */
     private $map_resolvers;
