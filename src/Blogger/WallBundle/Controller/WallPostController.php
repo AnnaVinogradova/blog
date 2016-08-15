@@ -111,32 +111,34 @@ class WallPostController extends Controller
 
             $yourPosts = array();
             $allPosts = array();
-            $repo = $em->getRepository('BloggerWallBundle:FriendRequest');
-            $friend_request = $repo->findOneBy(
-                    array('sender' => $user,
-                          'receiver' => $wall->getUser())
-                );
-            if(!$friend_request){
+            if(!$securityContext->isGranted('ROLE_ADMIN')){
+                $repo = $em->getRepository('BloggerWallBundle:FriendRequest');
                 $friend_request = $repo->findOneBy(
-                    array('sender' => $wall->getUser(),
-                          'receiver' => $user)
-                );
-            }
-
-            if($friend_request){
-                if(!$friend_request->getStatus()){
-                    return $this->render('wallpost/request.html.twig', array(
-                        'message' => 'This request exists. Now you should waiting',
-                        'link' => false,
-                        'id' => $id,
-                    ));
+                        array('sender' => $user,
+                              'receiver' => $wall->getUser())
+                    );
+                if(!$friend_request){
+                    $friend_request = $repo->findOneBy(
+                        array('sender' => $wall->getUser(),
+                              'receiver' => $user)
+                    );
                 }
-            } else {
-                return $this->render('wallpost/request.html.twig', array(
-                        'message' => 'This user not in your friendlist. You can send request to user.',
-                        'link' => true,
-                        'id' => $id,
-                    ));
+
+                if($friend_request){
+                    if(!$friend_request->getStatus()){
+                        return $this->render('wallpost/request.html.twig', array(
+                            'message' => 'This request exists. Now you should waiting',
+                            'link' => false,
+                            'id' => $id,
+                        ));
+                    }
+                } else {
+                    return $this->render('wallpost/request.html.twig', array(
+                            'message' => 'This user not in your friendlist. You can send request to user.',
+                            'link' => true,
+                            'id' => $id,
+                        ));
+                }
             }
 
             $repo = $em->getRepository('BloggerWallBundle:WallPost');
