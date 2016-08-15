@@ -18,6 +18,7 @@ use Blogger\WallBundle\Form\WallPostType;
  */
 class WallPostController extends Controller
 {
+
     /**
      * Lists all WallPost entities on user wall.
      *
@@ -100,8 +101,6 @@ class WallPostController extends Controller
         if($securityContext->isGranted('ROLE_USER')){
             $user = $securityContext->getToken()->getUser();
             $em = $this->getDoctrine()->getManager();
-            $yourPosts = array();
-            $allPosts = array();
             $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
                     array('id' => $id)
                 );
@@ -110,15 +109,24 @@ class WallPostController extends Controller
                 return $this->redirectToRoute('wallpost_index');
             }
 
-            $friend_request = $em->getRepository('BloggerWallBundle:FriendRequest')->findOneBy(
+            $yourPosts = array();
+            $allPosts = array();
+            $repo = $em->getRepository('BloggerWallBundle:FriendRequest');
+            $friend_request = $repo->findOneBy(
                     array('sender' => $user,
                           'receiver' => $wall->getUser())
                 );
+            if(!$friend_request){
+                $friend_request = $repo->findOneBy(
+                    array('sender' => $wall->getUser(),
+                          'receiver' => $user)
+                );
+            }
 
             if($friend_request){
                 if(!$friend_request->getStatus()){
                     return $this->render('wallpost/request.html.twig', array(
-                        'message' => 'You sent user your request. Now you should waiting',
+                        'message' => 'This request exists. Now you should waiting',
                         'link' => false,
                         'id' => $id,
                     ));
@@ -131,7 +139,7 @@ class WallPostController extends Controller
                     ));
             }
 
-            $repo =  $em->getRepository('BloggerWallBundle:WallPost');
+            $repo = $em->getRepository('BloggerWallBundle:WallPost');
             $yourPosts =$repo->findBy( 
                     array('wall' => $wall,
                     'user' => $user),
@@ -173,6 +181,13 @@ class WallPostController extends Controller
             $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
                         array('id' => $id)
                     );
+            $user = $wall->getUser();            
+            $currentUser = $securityContext->getToken()->getUser();
+            if($user != $currentUser){
+                if(!$user->isFriend($securityContext, $this)){
+                    return $this->redirectToRoute('wall_index', array('id' => $id));
+                }
+            }         
 
             $wallPost = new WallPost();
             $form = $this->createForm('Blogger\WallBundle\Form\WallPostType', $wallPost);

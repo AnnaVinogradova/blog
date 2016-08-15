@@ -23,5 +23,15 @@
                     </li>
                 </ul>
             {% endfor %}
+            {% for friend in yours %}
+                <ul>
+                    <li>{{friend.receiver }}</li>
+                    <li class="edit-form">
+                        {{ form_start(friend.form) }}
+                            <input type="submit" value="Delete">
+                        {{ form_end(friend.form) }}
+                    </li>
+                </ul>
+            {% endfor %}
     </div>
 {% endblock %}

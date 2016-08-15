@@ -182,4 +182,50 @@ class User extends BaseUser
         $request->setReceiver($this);
         return $this;
     }
+
+    /**
+     * Get requests
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMyRequests()
+    {
+        return $this->sent_requests;
+    }
+ 
+    public function addMyRequest(\Blogger\WallBundle\Entity\FriendRequest $request)
+    {
+        $this->sent_requests[] = $request;
+        $request->setSender($this);
+        return $this;
+    }
+
+    public function isFriend($securityContext, $context){
+
+        if(!$securityContext->isGranted('ROLE_ADMIN')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $context->getDoctrine()->getManager();
+            return $this->checkAccess($user, $em); 
+        }
+        return true;
+    }
+
+    private function checkAccess($user, $em)
+    {
+        if($em->getRepository('BloggerWallBundle:FriendRequest')->findOneBy(
+                    array('sender' => $user,
+                          'receiver' => $this,
+                          'status' => true)
+                )
+        ) {
+            return true;
+        }
+
+        return $em->getRepository('BloggerWallBundle:FriendRequest')->findOneBy(
+                    array('sender' => $this,
+                          'receiver' => $user,
+                          'status' => true)
+                );
+    }
+
 }

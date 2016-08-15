@@ -5,6 +5,7 @@ namespace Blogger\WallBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\WallBundle\Entity\FriendRequest;
 use Blogger\WallBundle\Form\FriendRequestType;
@@ -25,26 +26,40 @@ class FriendRequestController extends Controller
     public function indexAction()
     {
         $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $friendRequests = $user->getFriendRequests();
+            $myRequests = $user->getMyRequests();
+            $acceptable = array();
+            $yours = array();
+            $waiting = array();            
 
-        $acceptable = array();
-        $waiting = array();
-        $friendRequests = $user->getFriendRequests();
-
-        foreach ($friendRequests as $request) {
-            if($request->getStatus()){
-                $deleteForm = $this->createDeleteForm($request);
-                $request->form = $deleteForm->createView();
-                $acceptable[] = $request;
-            } else {
-                $waiting[] = $request;
+            foreach ($friendRequests as $request) {
+                if($request->getStatus()){
+                    $deleteForm = $this->createDeleteForm($request);
+                    $request->form = $deleteForm->createView();
+                    $acceptable[] = $request;
+                } else {
+                    $waiting[] = $request;
+                }
             }
-        }
 
-        return $this->render('friendrequest/index.html.twig', array(
-            'requests' => $waiting,
-            'friends' => $acceptable,
-        ));
+            foreach ($myRequests as $request) {
+                if($request->getStatus()){
+                    $deleteForm = $this->createDeleteForm($request);
+                    $request->form = $deleteForm->createView();
+                    $yours[] = $request;
+                }
+            }
+
+            return $this->render('friendrequest/index.html.twig', array(
+                'requests' => $waiting,
+                'friends' => $acceptable,
+                'yours' => $yours
+            ));
+        } else {            
+            throw new AccessDeniedException();
+        }
     }
 
     /**
@@ -56,71 +71,70 @@ class FriendRequestController extends Controller
     public function newAction($id)
     {
         $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
 
-        $em = $this->getDoctrine()->getManager();
-        $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
-                    array('id' => $id)
-                );
-        $owner = $wall->getUser();
+            $em = $this->getDoctrine()->getManager();
+            $wall = $em->getRepository('BloggerWallBundle:Wall')->findOneBy(
+                        array('id' => $id)
+                    );
+            $owner = $wall->getUser();
 
-        $friendRequest = new FriendRequest();
-        $friendRequest->setSender($user);
-        $friendRequest->setReceiver($owner);
-        $friendRequest->setStatus(false);
-        $em->persist($friendRequest);
-        $em->flush();
+            if($this->isRequestExists($owner, $user)){
+                return $this->redirectToRoute('wall_index', array('id' => $id));
+            }
 
-        return $this->redirectToRoute('wall_index', array('id' => $id));
+            $friendRequest = new FriendRequest();
+            $friendRequest->setSender($user);
+            $friendRequest->setReceiver($owner);
+            $friendRequest->setStatus(false);
+            $em->persist($friendRequest);
+            $em->flush();
 
+            return $this->redirectToRoute('wall_index', array('id' => $id));
+        } else {            
+            throw new AccessDeniedException();
+        }
     }
 
     /**
-     * Finds and displays a FriendRequest entity.
-     *
-     * @Route("/{id}", name="friendrequest_show")
-     * @Method("GET")
-     */
-    public function showAction(FriendRequest $friendRequest)
-    {
-        $deleteForm = $this->createDeleteForm($friendRequest);
-
-        return $this->render('friendrequest/show.html.twig', array(
-            'friendRequest' => $friendRequest,
-            'delete_form' => $deleteForm->createView(),
-        ));
-    }
-
-    /**
-     * Displays a form to edit an existing FriendRequest entity.
+     * Displays a form to edit an existing FriendRequest entity only for receiver.
      *
      * @Route("/{id}/edit", name="friendrequest_edit")
      * @Method({"GET", "POST"})
      */
     public function editAction(Request $request, FriendRequest $friendRequest)
     {
-        $deleteForm = $this->createDeleteForm($friendRequest);
-        $editForm = $this->createForm('Blogger\WallBundle\Form\FriendRequestType', $friendRequest);
-        $editForm->handleRequest($request);
-        $id = $friendRequest->getId();
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $deleteForm = $this->createDeleteForm($friendRequest);
+            $editForm = $this->createForm('Blogger\WallBundle\Form\FriendRequestType', $friendRequest);
+            $editForm->handleRequest($request);
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $id = $friendRequest->getId();
+            $em = $this->getDoctrine()->getManager(); 
             $request = $em->getRepository('BloggerWallBundle:FriendRequest')->findOneBy(
-                    array('id' => $id)
-                );
-            $request->setStatus(true);
-            $em->persist($request);
-            $em->flush();
+                        array('id' => $id)
+                    );
+            $user = $securityContext->getToken()->getUser();
+            if($user == $request->getReceiver()){
+                if ($editForm->isSubmitted() && $editForm->isValid()) {     
+                    $request->setStatus(true);
+                    $em->persist($request);
+                    $em->flush();
 
-            return $this->redirectToRoute('friendlist_index');
+                    return $this->redirectToRoute('friendlist_index');
+                }
+
+                return $this->render('friendrequest/edit.html.twig', array(
+                    'friendRequest' => $friendRequest,
+                    'edit_form' => $editForm->createView(),
+                    'delete_form' => $deleteForm->createView(),
+                ));
+            }            
         }
 
-        return $this->render('friendrequest/edit.html.twig', array(
-            'friendRequest' => $friendRequest,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        throw new AccessDeniedException();        
     }
 
     /**
@@ -131,16 +145,23 @@ class FriendRequestController extends Controller
      */
     public function deleteAction(Request $request, FriendRequest $friendRequest)
     {
-        $form = $this->createDeleteForm($friendRequest);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $form = $this->createDeleteForm($friendRequest);
+            $form->handleRequest($request);
+            
+            $user = $securityContext->getToken()->getUser();
+            if(($user == $friendRequest->getReceiver()) || ($user == $friendRequest->getSender())){
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->remove($friendRequest);
+                    $em->flush();
+                }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($friendRequest);
-            $em->flush();
-        }
-
-        return $this->redirectToRoute('friendlist_index');
+                return $this->redirectToRoute('friendlist_index');
+            }
+        } 
+        throw new AccessDeniedException();      
     }
 
     /**
@@ -157,5 +178,21 @@ class FriendRequestController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function isRequestExists($owner, $user){
+        $repo = $this->getDoctrine()->getManager()->getRepository('BloggerWallBundle:FriendRequest');
+
+        if($repo->findOneBy(
+                        array('sender' => $user,
+                              'receiver' => $owner
+                            ))){
+                            return true;
+                        }
+
+        return $repo->findOneBy(
+                        array('sender' => $owner,
+                              'receiver' => $user
+                            ));
     }
 }

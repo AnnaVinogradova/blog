@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class FriendRequest
 {
+
     /**
      * @var int
      *
@@ -124,5 +125,6 @@ class FriendRequest
     {
         return $this->sender;
     }
+   
 }
 
