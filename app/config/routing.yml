@@ -1,3 +1,7 @@
+blogger_wall_friend_request:
+    resource: "@BloggerWallBundle/Controller/FriendRequestController.php"
+    type:     annotation
+
 blogger_wall_wall_post:
     resource: "@BloggerWallBundle/Controller/WallPostController.php"
     type:     annotation

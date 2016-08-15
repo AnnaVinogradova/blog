@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Send request</h3>
+    <div id="content">
+        {{ message }}  
+        {% if link %}
+            <ul>
+                <li>
+                    <a href="{{ path('friendrequest_new', {'id': id}) }}">Send request</a>
+                </li>
+            </ul>
+        {% endif %}      
+    </div>
+{% endblock %}

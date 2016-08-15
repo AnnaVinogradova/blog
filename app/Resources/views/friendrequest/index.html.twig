@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Friendlist</h3>
+    <div id="content">
+        <h3>Requests</h3>
+            {% for request in requests %}
+                    Request from {{request.sender }}
+                        <ul>
+                            <li>
+                                <a href="{{ path('friendrequest_edit', { 'id': request.id }) }}">accept/reject</a>
+                            </li>
+                        </ul>
+            {% endfor %}
+        <h3>Friends</h3>
+            {% for friend in friends %}
+                <ul>
+                    <li>{{friend.sender }}</li>
+                    <li class="edit-form">
+                        {{ form_start(friend.form) }}
+                            <input type="submit" value="Delete">
+                        {{ form_end(friend.form) }}
+                    </li>
+                </ul>
+            {% endfor %}
+    </div>
+{% endblock %}

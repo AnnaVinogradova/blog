@@ -76,5 +76,53 @@ class FriendRequest
     {
         return $this->status;
     }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return FriendRequest
+     */
+    public function setReceiver($user)
+    {
+        $this->receiver = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getReceiver()
+    {
+        return $this->receiver;
+    }
+
+    /**
+     * Set user
+     *
+     * @param string $user
+     *
+     * @return FriendRequest
+     */
+    public function setSender($user)
+    {
+        $this->sender = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return string
+     */
+    public function getSender()
+    {
+        return $this->sender;
+    }
 }
 

@@ -165,4 +165,21 @@ class User extends BaseUser
         $wall->setUser($this);
         return $this;
     }
+
+    /**
+     * Get requests
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getFriendRequests()
+    {
+        return $this->friend_requests;
+    }
+ 
+    public function addFriendRequest(\Blogger\WallBundle\Entity\FriendRequest $request)
+    {
+        $this->friend_requests[] = $request;
+        $request->setReceiver($this);
+        return $this;
+    }
 }

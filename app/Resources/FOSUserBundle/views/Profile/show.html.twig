@@ -8,6 +8,7 @@
 	<ul>
 		<li><a href="{{ path('fos_user_profile_edit') }}">Edit Profile</a></li>
 		<li><a href="{{ path('wallpost_index') }}">My wall</a></li>
+		<li><a href="{{ path('friendlist_index') }}">Friends</a></li>
 		<li><a href="{{ path('all_posts') }}">Your Posts</a></li>
 		{% if is_granted("ROLE_ADMIN") %}
 			<li><a href="{{ path('user_index') }}">Users</a></li>

@@ -110,6 +110,27 @@ class WallPostController extends Controller
                 return $this->redirectToRoute('wallpost_index');
             }
 
+            $friend_request = $em->getRepository('BloggerWallBundle:FriendRequest')->findOneBy(
+                    array('sender' => $user,
+                          'receiver' => $wall->getUser())
+                );
+
+            if($friend_request){
+                if(!$friend_request->getStatus()){
+                    return $this->render('wallpost/request.html.twig', array(
+                        'message' => 'You sent user your request. Now you should waiting',
+                        'link' => false,
+                        'id' => $id,
+                    ));
+                }
+            } else {
+                return $this->render('wallpost/request.html.twig', array(
+                        'message' => 'This user not in your friendlist. You can send request to user.',
+                        'link' => true,
+                        'id' => $id,
+                    ));
+            }
+
             $repo =  $em->getRepository('BloggerWallBundle:WallPost');
             $yourPosts =$repo->findBy( 
                     array('wall' => $wall,
