@@ -19,7 +19,10 @@ class PostType extends AbstractType
         $builder
             ->add('title')
             ->add('content', CKEditorType::class, array(
-    'config' => array('toolbar' => 'full')))
+                'config' => array(
+                'toolbar' => [ [ "Cut", "-", "Copy", "-", "Paste", "-", "PasteText", "-", "Undo", "Redo" ], 
+                                     ["Find", "-", "Replace", "-", "SelectAll", "-", "Scayt"],
+                                    "/", [ "Bold", "-", "Italic", "-", "Underline", "-", "Strike" ], "/", [ "Maximize" ] ])))
             ->add('image', FileType::class, array('data_class' => null, 'label' => 'Post (JPG file)','required' => false,
             'empty_data'  => null))
         ;

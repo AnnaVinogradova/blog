@@ -17,7 +17,7 @@
         	
         	    <img src="{{ asset(['images/', post.image]|join) }}" />
         	    <div>
-        	        <p>{{ post.content(500) }}</p>
+        	        <p>{{ post.content(500)  | raw }}</p>
         	        <p class="continue"><a href="{{ path('show', { 'id': post.id }) }}">Continue reading...</a></p>
         	    </div>
         	
