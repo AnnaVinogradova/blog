@@ -21,8 +21,11 @@ class PostType extends AbstractType
             ->add('content', CKEditorType::class, array(
                 'config' => array(
                 'toolbar' => [ [ "Cut", "-", "Copy", "-", "Paste", "-", "PasteText", "-", "Undo", "Redo" ], 
-                                     ["Find", "-", "Replace", "-", "SelectAll", "-", "Scayt"],
-                                    "/", [ "Bold", "-", "Italic", "-", "Underline", "-", "Strike" ], "/", [ "Maximize" ] ])))
+                                     ["Find", "-", "Replace", "-", "SelectAll", "-", "Scayt"], 
+                                     ["Link", "-", "Maximize"],
+                                    "/", [ "Bold", "-", "Italic", "-", "Underline", "-", "Strike" ], 
+                                    [ "Styles", "-", "Format", "-", "Font", "-", "FontSize" ],
+                                    ["Image"] ])))
             ->add('image', FileType::class, array('data_class' => null, 'label' => 'Post (JPG file)','required' => false,
             'empty_data'  => null))
         ;

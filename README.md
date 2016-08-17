@@ -79,3 +79,8 @@ For login/register part can use any Bundles (using composer)
   * user can send request to other user to add friend
   * user can approve/decline friend-invitation
   * only friends can see and write on wall of user
+
+##6
+
+* add text editor for posts of user (something like this http://ckeditor.com)
+* keep whole structure of post (styles, fonts, etc)
