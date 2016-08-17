@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormError;
+use Blogger\WallBundle\Entity\Wall;
 use Blogger\BlogBundle\Entity\User;
 use Blogger\BlogBundle\Form\UserType;
 
@@ -53,6 +54,12 @@ class UserController extends Controller
         	$user->setPlainPassword($user->getPassword());
             try {
                 $userManager->updateUser($user);
+                $em = $this->getDoctrine()->getManager();
+                $wall = new Wall();
+                $wall->setUser($user);
+                $em->persist($wall);
+                $em->flush();
+
                 return $this->redirectToRoute('user_index', array('id' => $user->getId()));
             }
             catch(\Exception $e) {

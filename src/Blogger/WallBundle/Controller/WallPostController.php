@@ -33,28 +33,22 @@ class WallPostController extends Controller
             $em = $this->getDoctrine()->getManager();
             $yourPosts = array();
             $allPosts = array();
-            $wall = null;
 
-            if(! $wall = $user->getWall()){
-                $wall = new Wall();
-                $wall->setUser($user);
-                $em->persist($wall);
-                $em->flush();
-            } else {
-                $repo = $em->getRepository('BloggerWallBundle:WallPost');
-                $yourPosts = $repo->findBy( 
-                    array('wall' => $wall,
-                    'user' => $user),
-                    array('date' => 'DESC')
-                );
-                $allPosts = $repo->findBy( 
-                    array('wall' => $wall),
-                    array('date' => 'DESC')
-                );
+            $wall = $user->getWall();
 
-                foreach ($allPosts as $post) {
-                    $post->form = $this->createDeleteForm($post)->createView();
-                }
+            $repo = $em->getRepository('BloggerWallBundle:WallPost');
+            $yourPosts = $repo->findBy( 
+                array('wall' => $wall,
+                'user' => $user),
+                array('date' => 'DESC')
+            );
+            $allPosts = $repo->findBy( 
+                array('wall' => $wall),
+                array('date' => 'DESC')
+            );
+
+            foreach ($allPosts as $post) {
+                $post->form = $this->createDeleteForm($post)->createView();
             }           
            
             return $this->render('wallpost/index.html.twig', array(
