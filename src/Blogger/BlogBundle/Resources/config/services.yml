@@ -1,4 +1,9 @@
+
 services:
-#    blogger_blog.example:
-#        class: Blogger\BlogBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    blogger.blog.topic.game:
+        class: Blogger\BlogBundle\Topic\GameTopic
+        arguments: 
+          - @doctrine.orm.default_entity_manager
+          - @gos_web_socket.websocket.client_manipulator
+        tags:
+          - { name: gos_web_socket.topic }
