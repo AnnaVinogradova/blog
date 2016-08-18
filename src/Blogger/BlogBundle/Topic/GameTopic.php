@@ -32,24 +32,27 @@ class GameTopic implements TopicInterface
         $user = $this->clientManipulator->getClient($connection);
         $posts = $this->em->getRepository('BloggerBlogBundle:Post')->findOneById(1);
         $name = $posts->getTitle();
-
+        $id = $connection->resourceId;
+        $topic_id = $topic->getId();
 
         //$user = $this->clientStorage->getClient($connection->WAMP->clientStorageId);
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has joined " . $topic->getId() . $user.$name]);
+        $topic->broadcast(['msg' =>  "User " . $user . " has joined to game"]);
     }
 
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
+        $user = $this->clientManipulator->getClient($connection);
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => $connection->resourceId . " has left " . $topic->getId()]);
+        $topic->broadcast(['msg' => "User " . $user . " has left the game"]);
     }
 
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
-       $topic->broadcast([
-            'msg' => $event,
-        ]);
+        $user = $this->clientManipulator->getClient($connection);
+        $topic->broadcast([
+                'msg' => 'User ' . $user . ' call ' . $event,
+            ]);
     }
 
     public function getName()

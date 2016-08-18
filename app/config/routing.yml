@@ -1,3 +1,8 @@
+blogger_game:
+    resource: "@BloggerGameBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 blogger_wall_friend_request:
     resource: "@BloggerWallBundle/Controller/FriendRequestController.php"
     type:     annotation

@@ -1,9 +1,7 @@
 blogger_blog_topic_game:
-    channel: app/chat/{room}/{user_id}
+    channel: app/game/{room}
     handler:
         callback: 'topic.game' #Относится к getName, а не к имени сервиса
     requirements:
         room:
-            pattern: "[a-z]+" #accept all valid regex, don't put delimiters !
-        user_id:
             pattern: "\d+"

@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Game list</h3>
+            <ul>
+                <li>
+                    <a href="{{ path('game_new') }}">Create a new game</a>
+                </li>
+            </ul>
+            <ul>
+                {% for game in mygames %}
+                    <li><a href="{{ path('play_game', { 'id': game.id }) }}">Play </a>{{ game.player1 }} vs {{ game.player2 }}</li>
+                {% endfor %}
+
+                {% for game in requests %}
+                    <li><a href="{{ path('game_edit', { 'id': game.id }) }}">Accept/Reject</a> game {{ game.player1 }} vs {{ game.player2 }}</li>
+                {% endfor %}
+            </ul>
+{% endblock %}

@@ -60,23 +60,7 @@
     <script type="text/javascript" src="{{ asset('bundles/goswebsocket/js/gos_web_socket_client.js') }}"></script>
  <script type="text/javascript" src="{{ asset('bundles/goswebsocket/js/vendor/autobahn.min.js') }}"></script>
 
-<script>
-    var webSocket = WS.connect("ws://192.168.17.129:3000");
 
-webSocket.on("socket/connect", function(session){
-    console.log('Its ok');
-    session.subscribe("app/chat/new/2", function(uri, payload){
-        console.log("Received message", payload.msg);
-    });
-
-    session.publish("app/chat/new/2", "Привет, я пришел от клиента!!!");
-})
-
-webSocket.on("socket/disconnect", function(error){
-    //error provides us with some insight into the disconnection: error.reason and error.code
-    console.log("Disconnected for " + error.reason + " with code " + error.code);
-});
-</script>
 {% endblock %}
 </body>
 </html>

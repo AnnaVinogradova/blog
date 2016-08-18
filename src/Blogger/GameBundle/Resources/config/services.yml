@@ -1,0 +1,4 @@
+services:
+#    blogger_game.example:
+#        class: Blogger\GameBundle\Example
+#        arguments: ["@service_id", "plain_value", %parameter%]

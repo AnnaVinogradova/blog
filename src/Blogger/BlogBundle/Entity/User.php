@@ -69,6 +69,16 @@ class User extends BaseUser
      */
     private $map_resolvers;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Blogger\GameBundle\Entity\Game", mappedBy="player1", cascade={"persist", "remove"})
+     */
+    private $player1_games;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Blogger\GameBundle\Entity\Game", mappedBy="player2", cascade={"persist", "remove"})
+     */
+    private $player2_games;
+
     public function addPost(Post $post)
     {
         $this->posts[] = $post;

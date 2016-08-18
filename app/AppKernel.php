@@ -25,6 +25,7 @@ class AppKernel extends Kernel
             new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
             new Gos\Bundle\WebSocketBundle\GosWebSocketBundle(),
             new Gos\Bundle\PubSubRouterBundle\GosPubSubRouterBundle(),
+            new Blogger\GameBundle\BloggerGameBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
