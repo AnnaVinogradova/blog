@@ -96,21 +96,15 @@ class GameController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $game = $em->getRepository('BloggerGameBundle:Game')->findOneById($id);
-        //$game = new Game();
-        //$form = $this->createForm('Blogger\GameBundle\Form\GameType', $game);
-        //$form->handleRequest($request);
-
-        //if ($form->isSubmitted() && $form->isValid()) {
-            //
-            //$game->setPlayer1($user);
-            //$em->persist($game);
-            //$em->flush();
-
-            //return $this->redirectToRoute('game_show', array('id' => $game->getId()));
-        //}
+        if($game->getPlayer1() == $user){
+            $number = $game->getNumber1();
+        } else {
+            $number = $game->getNumber2();
+        }
 
         return $this->render('game/play.html.twig', array(
             'game' => $game,
+            'number' => $number
         ));
     }
 

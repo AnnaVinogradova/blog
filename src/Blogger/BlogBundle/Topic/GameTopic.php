@@ -49,10 +49,40 @@ class GameTopic implements TopicInterface
 
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {
+        $resource = $topic->getId();
+        $pos = strrpos($resource, '/', -1);
+        $id = substr($resource, $pos+1);
+
         $user = $this->clientManipulator->getClient($connection);
+        $obj_user = $this->em->getRepository('BloggerBlogBundle:User')->findOneBy(array("username" => $user));
+        $game = $this->em->getRepository('BloggerGameBundle:Game')->findOneById($id);
+
+        //check user access
+        if($game->getNextStep()->getUsername() == $user){
+            if($game->getPlayer1()->getUsername() == $user){
+                $number = $game->getNumber2();
+                $game->setNextStep($game->getPlayer2());
+            } else {
+                $number = $game->getNumber1();
+                $game->setNextStep($game->getPlayer1());
+            }
+
+            $this->em->persist($game);
+            $this->em->flush();
+
+            $called_number = $event + 0;
+            if($called_number == $number){
+                $message = $user . " win";
+            } else {
+                $message = "try later";
+            }
+        } else {
+            $message = " but it's not his step";
+        }
+
         $topic->broadcast([
-                'msg' => 'User ' . $user . ' call ' . $event,
-            ]);
+            'msg' => "User ". $user . " call " . $event . $message,
+        ]);
     }
 
     public function getName()
