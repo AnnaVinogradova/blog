@@ -30,11 +30,6 @@ class GameTopic implements TopicInterface
     public function onSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         $user = $this->clientManipulator->getClient($connection);
-        $posts = $this->em->getRepository('BloggerBlogBundle:Post')->findOneById(1);
-        $name = $posts->getTitle();
-        $id = $connection->resourceId;
-        $topic_id = $topic->getId();
-
         //$user = $this->clientStorage->getClient($connection->WAMP->clientStorageId);
         //this will broadcast the message to ALL subscribers of this topic.
         $topic->broadcast(['msg' =>  "User " . $user . " has joined to game"]);
@@ -59,7 +54,7 @@ class GameTopic implements TopicInterface
 
         if(!$game){
             $topic->broadcast([
-            'msg' => "Game already finished",
+            'msg' => "Game has already finished",
         ]);
             return;
         }

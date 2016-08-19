@@ -84,3 +84,11 @@ For login/register part can use any Bundles (using composer)
 
 * add text editor for posts of user (something like this http://ckeditor.com)
 * keep whole structure of post (styles, fonts, etc)
+
+##7
+
+* create game "bulls and cows" for two logged users (friends only), rules of game here: (https://ru.wikipedia.org/wiki/%D0%91%D1%8B%D0%BA%D0%B8_%D0%B8_%D0%BA%D0%BE%D1%80%D0%BE%D0%B2%D1%8B)
+* user can invite (request) friend to play to game
+* friend can approve\decline request to play
+* when friend approve request to play he can visit link with game (user can visit for game too)
+* game can be created, started and finished

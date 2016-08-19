@@ -40,7 +40,7 @@ class Game
     private $number2;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="games", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="player1_games", cascade={"persist"})
      * @ORM\JoinColumn(name="player1_id", referencedColumnName="id", onDelete="cascade")
      * @var Blogger\BlogBundle\Entity\User
      */
@@ -55,7 +55,7 @@ class Game
     protected $player2;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="games", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="Blogger\BlogBundle\Entity\User", inversedBy="step_games", cascade={"persist"})
      * @ORM\JoinColumn(name="next_id", referencedColumnName="id", onDelete="cascade")
      * @var Blogger\BlogBundle\Entity\User
      */

@@ -70,6 +70,11 @@ class User extends BaseUser
     private $map_resolvers;
 
     /**
+     * @ORM\OneToMany(targetEntity="Blogger\GameBundle\Entity\Game", mappedBy="next_step", cascade={"persist", "remove"})
+     */
+    private $step_games;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\GameBundle\Entity\Game", mappedBy="player1", cascade={"persist", "remove"})
      */
     private $player1_games;
