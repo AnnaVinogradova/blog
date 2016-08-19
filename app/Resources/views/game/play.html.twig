@@ -33,11 +33,14 @@
         session.subscribe("app/game/{{ game.id }}", function(uri, payload){
             li = document.createElement("li");
             li.appendChild(document.createTextNode(payload.msg));
-            list.appendChild(li);
+            //list.appendChild(li);
+            list.insertBefore(li, list.firstChild);
         });
 
         document.number_form.addEventListener("submit", function(e){
-        number = document.number_form.number.value;   
+        number = document.number_form.number.value; 
+        number = number.substring(0,4);  
+        document.number_form.number.value = number;
         session.publish("app/game/{{ game.id }}", number);
 
         e.preventDefault();

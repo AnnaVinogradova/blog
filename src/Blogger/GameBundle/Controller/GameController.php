@@ -6,8 +6,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Blogger\GameBundle\Entity\Game;
 use Blogger\GameBundle\Form\GameType;
+use Symfony\Component\Form\FormError;
 
 /**
  * Game controller.
@@ -25,32 +28,37 @@ class GameController extends Controller
     public function indexAction()
     {
         $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('BloggerGameBundle:Game');
-        $mygames = array();
-        $answers = array();
 
-        $mygames = $repo->findBy(
-            array("player1" => $user)
-            );
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('BloggerGameBundle:Game');
+            $mygames = array();
+            $answers = array();
 
-        $requests = $repo->findBy(
-            array("player2" => $user)
-            );
+            $mygames = $repo->findBy(
+                array("player1" => $user)
+                );
 
-        foreach ($requests as $game) {
-            if($game->getNumber2() != null){
-                $mygames[] = $game;
-            } else {
-                 $answers[] = $game;
+            $requests = $repo->findBy(
+                array("player2" => $user)
+                );
+
+            foreach ($requests as $game) {
+                if($game->getNumber2() != null){
+                    $mygames[] = $game;
+                } else {
+                     $answers[] = $game;
+                }
             }
-        }
 
-        return $this->render('game/index.html.twig', array(
-            'mygames' => $mygames,
-            "requests" => $answers
-        ));
+            return $this->render('game/index.html.twig', array(
+                'mygames' => $mygames,
+                "requests" => $answers
+            ));
+        } else {
+            throw new AccessDeniedException();
+        }
     }
 
     /**
@@ -62,25 +70,46 @@ class GameController extends Controller
     public function newAction(Request $request)
     {
         $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
 
-        $game = new Game();
-        $form = $this->createForm('Blogger\GameBundle\Form\GameType', $game);
-        $form->handleRequest($request);
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $game->setPlayer1($user);
-            $em->persist($game);
-            $em->flush();
+            $game = new Game();
+            $form = $this->createForm('Blogger\GameBundle\Form\GameType', $game);
+            $form->handleRequest($request);
 
-            return $this->redirectToRoute('game_show', array('id' => $game->getId()));
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $player2 = $game->getPlayer2();
+                if($user != $player2){
+                    $repo = $em->getRepository('BloggerGameBundle:Game');
+                    $isExists = $repo->findBy(
+                        array("player1" => $user,
+                              "player2" => $player2)
+                        );
+                    if(!$isExists){
+                        $game->setPlayer1($user);
+                        $game->setNextStep($user);
+                        $em->persist($game);
+                        $em->flush();
+
+                        return $this->redirectToRoute('game_show', array('id' => $game->getId()));
+                    } else {
+                        $form->addError(new FormError("This game already exists."));
+                    }
+                } else {
+                    $form->addError(new FormError("You can't play with yourself."));
+                }
+                
+            }
+
+            return $this->render('game/new.html.twig', array(
+                'game' => $game,
+                'form' => $form->createView(),
+            ));
+        } else {
+            throw new AccessDeniedException();
         }
-
-        return $this->render('game/new.html.twig', array(
-            'game' => $game,
-            'form' => $form->createView(),
-        ));
     }
 
     /**
@@ -92,36 +121,29 @@ class GameController extends Controller
     public function playAction($id)
     {
         $securityContext = $this->container->get('security.context');
-        $user = $securityContext->getToken()->getUser();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $em = $this->getDoctrine()->getManager();
+            $game = $em->getRepository('BloggerGameBundle:Game')->findOneById($id);
+            if(!$game){
+                throw new NotFoundHttpException("Page not found");                
+            }
+            if(($user != $game->getPlayer2()) && ($user != $game->getPlayer1())){
+                    throw new AccessDeniedException();
+                }
 
-        $em = $this->getDoctrine()->getManager();
-        $game = $em->getRepository('BloggerGameBundle:Game')->findOneById($id);
-        if($game->getPlayer1() == $user){
-            $number = $game->getNumber1();
-        } else {
-            $number = $game->getNumber2();
+            if($game->getPlayer1() == $user){
+                $number = $game->getNumber1();
+            } else {
+                $number = $game->getNumber2();
+            }
+
+            return $this->render('game/play.html.twig', array(
+                'game' => $game,
+                'number' => $number
+            ));
         }
-
-        return $this->render('game/play.html.twig', array(
-            'game' => $game,
-            'number' => $number
-        ));
-    }
-
-    /**
-     * Finds and displays a Game entity.
-     *
-     * @Route("/{id}", name="game_show")
-     * @Method("GET")
-     */
-    public function showAction(Game $game)
-    {
-        $deleteForm = $this->createDeleteForm($game);
-
-        return $this->render('game/show.html.twig', array(
-            'game' => $game,
-            'delete_form' => $deleteForm->createView(),
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
@@ -132,26 +154,38 @@ class GameController extends Controller
      */
     public function editAction(Request $request, Game $game)
     {
-        $deleteForm = $this->createDeleteForm($game);
-        $editForm = $this->createForm('Blogger\GameBundle\Form\GameEditType', $game);
-        $editForm->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $number = $game->getNumber2();
-            $game = $em->getRepository('BloggerGameBundle:Game')->findOneById($game->getId());
-            $game = $game->setNumber2($number);
-            $em->persist($game);
-            $em->flush();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $deleteForm = $this->createDeleteForm($game);
+            $editForm = $this->createForm('Blogger\GameBundle\Form\GameEditType', $game);
+            $editForm->handleRequest($request);
 
-            return $this->redirectToRoute('game_edit', array('id' => $game->getId()));
+            if ($editForm->isSubmitted() && $editForm->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                $number = $game->getNumber2();
+                $game = $em->getRepository('BloggerGameBundle:Game')->findOneById($game->getId());
+
+                if($user != $game->getPlayer2()){
+                    throw new AccessDeniedException();
+                }
+
+                $game = $game->setNumber2($number);
+                $em->persist($game);
+                $em->flush();
+
+                return $this->redirectToRoute('game_edit', array('id' => $game->getId()));
+            }
+
+            return $this->render('game/edit.html.twig', array(
+                'game' => $game,
+                'edit_form' => $editForm->createView(),
+                'delete_form' => $deleteForm->createView(),
+            ));
         }
 
-        return $this->render('game/edit.html.twig', array(
-            'game' => $game,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
@@ -162,16 +196,26 @@ class GameController extends Controller
      */
     public function deleteAction(Request $request, Game $game)
     {
-        $form = $this->createDeleteForm($game);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($game);
-            $em->flush();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $form = $this->createDeleteForm($game);
+            $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $em = $this->getDoctrine()->getManager();
+                if(($user != $game->getPlayer2()) && ($user != $game->getPlayer1())){
+                    throw new AccessDeniedException();
+                }
+                $em->remove($game);
+                $em->flush();
+            }
+
+            return $this->redirectToRoute('game_index');
         }
 
-        return $this->redirectToRoute('game_index');
+        throw new AccessDeniedException();
     }
 
     /**

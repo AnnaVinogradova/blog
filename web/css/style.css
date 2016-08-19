@@ -173,4 +173,6 @@ legend {
     border: 1px solid #000;
     padding: 15px;
     box-shadow: 2px 2px 3px #000, -2px -2px 3px #000;
+    height: 200px;
+    overflow: scroll;
 }
