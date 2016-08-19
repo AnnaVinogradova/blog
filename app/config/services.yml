@@ -4,9 +4,9 @@ services:
     pdo:
       class: PDO
       arguments:
-          dsn: mysql:host=127.0.0.1;port=null;dbname=symfony_blog
-          user: admin
-          password: 123456
+          dsn: mysql:host=%database_host%;dbname=%database_name%
+          user: "%database_user%"
+          password: "%database_password%"
       calls:
           - [ setAttribute, [3, 2] ] # \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION
 
