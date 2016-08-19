@@ -88,12 +88,15 @@ class GameController extends Controller
                               "player2" => $player2)
                         );
                     if(!$isExists){
-                        $game->setPlayer1($user);
-                        $game->setNextStep($user);
-                        $em->persist($game);
-                        $em->flush();
-
-                        return $this->redirectToRoute('game_index');
+                        if(!$player2->isFriend($securityContext, $this)){
+                            $form->addError(new FormError("This user isn't your friend."));
+                        } else {
+                            $game->setPlayer1($user);
+                            $game->setNextStep($user);
+                            $em->persist($game);
+                            $em->flush();
+                            return $this->redirectToRoute('game_index');
+                        }
                     } else {
                         $form->addError(new FormError("This game already exists."));
                     }

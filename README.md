@@ -15,6 +15,8 @@ Installation
 
   * $ php app/console assets:install web
 
+  * $ php app/console gos:websocket:server
+
 Credentials
 -------------
   
