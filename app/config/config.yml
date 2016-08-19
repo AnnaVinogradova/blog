@@ -81,8 +81,8 @@ doctrine_migrations:
 
 gos_web_socket:
     server:
-        port: 3337        #The port the socket server will listen on
-        host: 192.168.17.129   #The host ip to bind to
+        port: "%ws_port%"        #The port the socket server will listen on
+        host: "%ws_host%"   #The host ip to bind to
         router:
             resources:
                 - '@BloggerBlogBundle/Resources/config/pubsub/routing.yml'
