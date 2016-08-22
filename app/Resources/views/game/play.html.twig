@@ -26,6 +26,24 @@
 <script>
     var list = document.getElementById('messages');
 
+    function checkInt(value){
+        return value.match(/^\d+$/);
+    }
+
+    function repeatedNumbers(number){
+            array[number]++;
+            return array[number]<=1;
+    }        
+
+    function checkNumber(number){
+        calledNumber = number.split('');
+        for(i=0; i<=9; i++){
+            array[i] = 0;
+        }
+        return calledNumber.every(repeatedNumbers);
+    }
+
+    array = new Array();
     var _WS_URI = "ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}";
     var webSocket = WS.connect(_WS_URI);
 
@@ -42,7 +60,15 @@
         number = document.number_form.number.value; 
         number = number.substring(0,4);  
         document.number_form.number.value = number;
-        session.publish("app/game/{{ game.id }}", number);
+
+        if(!checkInt(number) || !checkNumber(number)){
+            li = document.createElement("li");
+            li.appendChild(document.createTextNode("Invalid number " + number));
+            list.insertBefore(li, list.firstChild);
+        } else {
+            session.publish("app/game/{{ game.id }}", number);
+        }
+        
 
         e.preventDefault();
     });
