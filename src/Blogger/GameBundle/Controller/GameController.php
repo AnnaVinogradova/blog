@@ -91,11 +91,16 @@ class GameController extends Controller
                         if(!$player2->isFriend($securityContext, $this)){
                             $form->addError(new FormError("This user isn't your friend."));
                         } else {
-                            $game->setPlayer1($user);
-                            $game->setNextStep($user);
-                            $em->persist($game);
-                            $em->flush();
-                            return $this->redirectToRoute('game_index');
+                        	$str_number = str_split($game->getNumber1() . "");
+                        	if($this->checkNumber($str_number)){
+                        		$game->setPlayer1($user);
+	                            $game->setNextStep($user);
+	                            $em->persist($game);
+	                            $em->flush();
+	                            return $this->redirectToRoute('game_index');
+                        	} else {
+                        		$form->addError(new FormError("Invalid number format."));
+                        	}                            
                         }
                     } else {
                         $form->addError(new FormError("This game already exists."));
@@ -173,12 +178,17 @@ class GameController extends Controller
                 if($user != $game->getPlayer2()){
                     throw new AccessDeniedException();
                 }
+                $str_number = str_split($number . "");
+                if($this->checkNumber($str_number)){
+					$game = $game->setNumber2($number);
+	                $em->persist($game);
+	                $em->flush();
 
-                $game = $game->setNumber2($number);
-                $em->persist($game);
-                $em->flush();
-
-                return $this->redirectToRoute('game_edit', array('id' => $game->getId()));
+	                return $this->redirectToRoute('game_index');
+                } else {
+                	$editForm->addError(new FormError("Invalid number format."));
+                }
+                
             }
 
             return $this->render('game/edit.html.twig', array(
@@ -235,5 +245,23 @@ class GameController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+
+    private function checkNumber($number)
+    {
+    	for ($i=0; $i <= 9 ; $i++) { 
+    		$num_array[$i] = 0;
+    	}
+
+    	foreach ($number as $value) {
+    		$num_array[$value]++;
+
+    		if($num_array[$value] > 1){
+    			return false;
+    		}
+    	}
+
+    	return true;
+
     }
 }
