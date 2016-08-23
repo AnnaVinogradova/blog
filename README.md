@@ -15,6 +15,8 @@ Installation
 
   * $ php app/console assets:install web
 
+  * $ php app/console fos:elastica:populate
+
   * $ php app/console gos:websocket:server
 
 Credentials
@@ -94,3 +96,7 @@ For login/register part can use any Bundles (using composer)
 * friend can approve\decline request to play
 * when friend approve request to play he can visit link with game (user can visit for game too)
 * game can be created, started and finished
+
+##8
+
+* create search for users (nickname) using elasticsearch
