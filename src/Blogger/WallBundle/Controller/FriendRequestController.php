@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Blogger\WallBundle\Entity\FriendRequest;
+use Blogger\BlogBundle\Entity\User;
 use Blogger\WallBundle\Form\FriendRequestType;
 
 /**
@@ -63,44 +64,30 @@ class FriendRequestController extends Controller
     }
 
     /**
-     * Lists all FriendRequest entities for user.
+     * Lists all User entities or Single User from request.
      *
      * @Route("/list", name="user_list")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      */
-    public function listAction()
+    public function listAction(Request $request)
     {
-        /*$securityContext = $this->container->get('security.context');
-        if($securityContext->isGranted('ROLE_USER')){
-            $user = $securityContext->getToken()->getUser();
-            $friendRequests = $user->getFriendRequests();
-            $myRequests = $user->getMyRequests();
-            $acceptable = array();
-            $yours = array();
-            $waiting = array();            
+        $user = new User();
+        $form = $this->createForm('Blogger\WallBundle\Form\UserFindType', $user);
+        $form->handleRequest($request);
 
-            foreach ($friendRequests as $request) {
-                if($request->getStatus()){
-                    $deleteForm = $this->createDeleteForm($request);
-                    $request->form = $deleteForm->createView();
-                    $acceptable[] = $request;
-                } else {
-                    $waiting[] = $request;
-                }
-            }
+        $finder = $this->container->get('fos_elastica.finder.app.user');
+            
+        $results = $finder->find($user->getUsername());
+        if(!$results){
+            return $this->render('friendrequest/users.html.twig', array(
+                'form' => $form->createView(),
+                ));
+        }
+        return $this->render('friendrequest/users.html.twig', array(
+            "list" => $results,
+            'form' => $form->createView(),
+            ));
 
-            foreach ($myRequests as $request) {
-                if($request->getStatus()){
-                    $deleteForm = $this->createDeleteForm($request);
-                    $request->form = $deleteForm->createView();
-                    $yours[] = $request;
-                }
-            }*/
-
-            return $this->render('friendrequest/users.html.twig');
-        //} else {            
-           // throw new AccessDeniedException();
-        //}
     }
 
     /**
