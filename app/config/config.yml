@@ -92,7 +92,7 @@ gos_web_socket:
         
 fos_elastica:
     clients:
-        default: { host: localhost, port: 9200 }
+        default: { host: "%elastica_host%", port: "%elastica_port%" }
     indexes:
         app:
             types:
