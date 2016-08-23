@@ -10,11 +10,11 @@
             {{ form_end(form) }}
         </div>
         {% if list is defined %}
-            <h3>User 
+            
                 {% for request in list %}
-                        <a href="{{ path('wall_index', { 'id': request.wall.id }) }}">{{ request }}</a>
+                    <h3>User <a href="{{ path('wall_index', { 'id': request.wall.id }) }}">{{ request }}</a></h3>
                 {% endfor %}
-            </h3>
+            
         {% else %}
             <h3>User doesn't exist</h3>
         {% endif %}
