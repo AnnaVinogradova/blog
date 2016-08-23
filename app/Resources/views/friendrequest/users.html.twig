@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Users</h3>
+    <div id="content">
+            {# for request in requests %}
+                    Request from {{request.sender }}
+                        <ul>
+                            <li>
+                                <a href="{{ path('friendrequest_edit', { 'id': request.id }) }}">accept/reject</a>
+                            </li>
+                        </ul>
+            {% endfor #}
+    </div>
+{% endblock %}

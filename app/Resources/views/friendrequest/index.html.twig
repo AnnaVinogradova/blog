@@ -3,6 +3,7 @@
 {% block body %}
     <h3>Friendlist</h3>
     <div id="content">
+       <a href="{{ path('user_list') }}">Find users</a>
         <h3>Requests</h3>
             {% for request in requests %}
                     Request from {{request.sender }}

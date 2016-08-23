@@ -63,6 +63,47 @@ class FriendRequestController extends Controller
     }
 
     /**
+     * Lists all FriendRequest entities for user.
+     *
+     * @Route("/list", name="user_list")
+     * @Method("GET")
+     */
+    public function listAction()
+    {
+        /*$securityContext = $this->container->get('security.context');
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            $friendRequests = $user->getFriendRequests();
+            $myRequests = $user->getMyRequests();
+            $acceptable = array();
+            $yours = array();
+            $waiting = array();            
+
+            foreach ($friendRequests as $request) {
+                if($request->getStatus()){
+                    $deleteForm = $this->createDeleteForm($request);
+                    $request->form = $deleteForm->createView();
+                    $acceptable[] = $request;
+                } else {
+                    $waiting[] = $request;
+                }
+            }
+
+            foreach ($myRequests as $request) {
+                if($request->getStatus()){
+                    $deleteForm = $this->createDeleteForm($request);
+                    $request->form = $deleteForm->createView();
+                    $yours[] = $request;
+                }
+            }*/
+
+            return $this->render('friendrequest/users.html.twig');
+        //} else {            
+           // throw new AccessDeniedException();
+        //}
+    }
+
+    /**
      * Creates a new FriendRequest entity.
      *
      * @Route("/{id}/new", name="friendrequest_new")

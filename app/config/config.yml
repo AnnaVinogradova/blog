@@ -90,3 +90,18 @@ gos_web_socket:
         firewall: main
         session_handler: @session.handler.pdo
         
+fos_elastica:
+    clients:
+        default: { host: localhost, port: 9200 }
+    indexes:
+        app:
+            types:
+                user:
+                    mappings:
+                        username: ~
+                    persistence:
+                        driver: orm
+                        model: Blogger\BlogBundle\Entity\User
+                        provider: ~
+                        listener: ~
+                        finder: ~
