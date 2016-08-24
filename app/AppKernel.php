@@ -27,6 +27,7 @@ class AppKernel extends Kernel
             new Gos\Bundle\PubSubRouterBundle\GosPubSubRouterBundle(),
             new Blogger\GameBundle\BloggerGameBundle(),
             new FOS\ElasticaBundle\FOSElasticaBundle(),
+            new Blogger\ChatBundle\BloggerChatBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

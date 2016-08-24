@@ -208,7 +208,8 @@ class FriendRequestController extends Controller
         ;
     }
 
-    private function isRequestExists($owner, $user){
+    private function isRequestExists($owner, $user)
+    {
         $repo = $this->getDoctrine()->getManager()->getRepository('BloggerWallBundle:FriendRequest');
 
         if($repo->findOneBy(

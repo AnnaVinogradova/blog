@@ -1,3 +1,7 @@
+blogger_chat:
+    resource: "@BloggerChatBundle/Resources/config/routing.yml"
+    prefix:   /
+
 blogger_game:
     resource: "@BloggerGameBundle/Controller/"
     type:     annotation

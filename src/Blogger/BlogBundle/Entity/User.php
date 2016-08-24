@@ -50,6 +50,16 @@ class User extends BaseUser
     protected $wall_posts;
 
     /**
+     * @ORM\OneToMany(targetEntity="Blogger\ChatBundle\Entity\Chat", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $chat;
+
+    /**
+     * @ORM\OneTomany(targetEntity="Blogger\ChatBundle\Entity\ChatMessage", mappedBy="user", cascade={"persist", "remove"})
+     */
+    protected $chat_messages;
+
+    /**
      * @ORM\OneToMany(targetEntity="Blogger\TodolistBundle\Entity\Request", mappedBy="user", cascade={"persist", "remove"})
      */
     private $requests;
