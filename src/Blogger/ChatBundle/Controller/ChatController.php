@@ -110,7 +110,7 @@ class ChatController extends Controller
 
         if($securityContext->isGranted('ROLE_USER')){
             $user = $securityContext->getToken()->getUser();
-            if($user == $chat->getUser()){
+            if(($user == $chat->getUser()) || ($securityContext->isGranted('ROLE_ADMIN'))){
                 $deleteForm = $this->createDeleteForm($chat);
                 $editForm = $this->createForm('Blogger\ChatBundle\Form\ChatType', $chat);
                 $editForm->handleRequest($request);
@@ -145,7 +145,7 @@ class ChatController extends Controller
 
         if($securityContext->isGranted('ROLE_USER')){
             $user = $securityContext->getToken()->getUser();
-            if($user == $chat->getUser()){
+            if(($user == $chat->getUser()) || ($securityContext->isGranted('ROLE_ADMIN'))){
                 $form = $this->createDeleteForm($chat);
                 $form->handleRequest($request);
 

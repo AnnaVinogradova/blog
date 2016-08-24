@@ -51,19 +51,25 @@ class ChatTopic implements TopicInterface
         $user = $this->clientManipulator->getClient($connection) . "";
         $obj_user = $this->em->getRepository('BloggerBlogBundle:User')->findOneBy(array("username" => $user));
         $chat = $this->em->getRepository('BloggerChatBundle:Chat')->findOneById($id);
-
-        $message = new ChatMessage();
-        $message->setContent($event);
-        $message->setUser($obj_user);
-        $message->setChat($chat);
-        $message->setTime(new \DateTime());
-        $this->em->persist($message);
-        $this->em->flush();
-  
-        $topic->broadcast([
-            'msg' => $event,
-            'user' => $user . ""
+        if(!$chat){
+            $topic->broadcast([
+            'msg' => "Chat not found",
         ]);
+        } else {
+            $message = new ChatMessage();
+            $message->setContent($event);
+            $message->setUser($obj_user);
+            $message->setChat($chat);
+            $message->setTime(new \DateTime());
+            $this->em->persist($message);
+            $this->em->flush();
+      
+            $topic->broadcast([
+                'msg' => $event,
+                'user' => $user . ""
+            ]);
+        }
+
     }
 
     public function getName()
