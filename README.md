@@ -100,3 +100,9 @@ For login/register part can use any Bundles (using composer)
 ##8
 
 * create search for users (nickname) using elasticsearch
+
+##9
+
+* chat between users
+* users can see list of opened chats
+* users can connect to chat and disconnect
