@@ -54,7 +54,7 @@ String.prototype.trim = function() {
 
         document.chat_form.addEventListener("submit", function(e){    
             message = document.chat_form.message.value.trim();
-            if(!message == ''){
+            if(message != ''){
                 session.publish("app/chat/{{ chat.id }}", message);
             }
             document.chat_form.message.value = '';
