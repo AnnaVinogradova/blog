@@ -25,13 +25,17 @@ class ChatController extends Controller
      */
     public function indexAction()
     {
-        $em = $this->getDoctrine()->getManager();
+        $securityContext = $this->container->get('security.context');
 
-        $chats = $em->getRepository('BloggerChatBundle:Chat')->findAll();
+        if($securityContext->isGranted('ROLE_USER')){
+            $em = $this->getDoctrine()->getManager();
+            $chats = $em->getRepository('BloggerChatBundle:Chat')->findAll();
 
-        return $this->render('chat/index.html.twig', array(
-            'chats' => $chats,
-        ));
+            return $this->render('chat/index.html.twig', array(
+                'chats' => $chats,
+            ));
+        }
+        throw new AccessDeniedException();
     }
 
     /**
@@ -42,26 +46,30 @@ class ChatController extends Controller
      */
     public function newAction(Request $request)
     {
-        $chat = new Chat();
-        $form = $this->createForm('Blogger\ChatBundle\Form\ChatType', $chat);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $securityContext = $this->container->get('security.context');
-            $user = $securityContext->getToken()->getUser();
+        if($securityContext->isGranted('ROLE_USER')){
+            $chat = new Chat();
+            $form = $this->createForm('Blogger\ChatBundle\Form\ChatType', $chat);
+            $form->handleRequest($request);
 
-            $em = $this->getDoctrine()->getManager();
-            $chat->setUser($user);
-            $em->persist($chat);
-            $em->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $user = $securityContext->getToken()->getUser();
 
-            return $this->redirectToRoute('chat_show', array('id' => $chat->getId()));
+                $em = $this->getDoctrine()->getManager();
+                $chat->setUser($user);
+                $em->persist($chat);
+                $em->flush();
+
+                return $this->redirectToRoute('chat_show', array('id' => $chat->getId()));
+            }
+
+            return $this->render('chat/new.html.twig', array(
+                'chat' => $chat,
+                'form' => $form->createView(),
+            ));
         }
-
-        return $this->render('chat/new.html.twig', array(
-            'chat' => $chat,
-            'form' => $form->createView(),
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
@@ -98,23 +106,31 @@ class ChatController extends Controller
      */
     public function editAction(Request $request, Chat $chat)
     {
-        $deleteForm = $this->createDeleteForm($chat);
-        $editForm = $this->createForm('Blogger\ChatBundle\Form\ChatType', $chat);
-        $editForm->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($chat);
-            $em->flush();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            if($user == $chat->getUser()){
+                $deleteForm = $this->createDeleteForm($chat);
+                $editForm = $this->createForm('Blogger\ChatBundle\Form\ChatType', $chat);
+                $editForm->handleRequest($request);
 
-            return $this->redirectToRoute('chat_edit', array('id' => $chat->getId()));
+                if ($editForm->isSubmitted() && $editForm->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->persist($chat);
+                    $em->flush();
+
+                    return $this->redirectToRoute('chat_show', array('id' => $chat->getId()));
+                }
+
+                return $this->render('chat/edit.html.twig', array(
+                    'chat' => $chat,
+                    'edit_form' => $editForm->createView(),
+                    'delete_form' => $deleteForm->createView(),
+                ));
+            }
         }
-
-        return $this->render('chat/edit.html.twig', array(
-            'chat' => $chat,
-            'edit_form' => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        ));
+        throw new AccessDeniedException();
     }
 
     /**
@@ -125,16 +141,24 @@ class ChatController extends Controller
      */
     public function deleteAction(Request $request, Chat $chat)
     {
-        $form = $this->createDeleteForm($chat);
-        $form->handleRequest($request);
+        $securityContext = $this->container->get('security.context');
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($chat);
-            $em->flush();
+        if($securityContext->isGranted('ROLE_USER')){
+            $user = $securityContext->getToken()->getUser();
+            if($user == $chat->getUser()){
+                $form = $this->createDeleteForm($chat);
+                $form->handleRequest($request);
+
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $em = $this->getDoctrine()->getManager();
+                    $em->remove($chat);
+                    $em->flush();
+                }
+
+                return $this->redirectToRoute('chat_index');
+            }
         }
-
-        return $this->redirectToRoute('chat_index');
+        throw new AccessDeniedException();
     }
 
     /**
@@ -152,4 +176,5 @@ class ChatController extends Controller
             ->getForm()
         ;
     }
+
 }

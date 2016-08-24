@@ -32,14 +32,14 @@ class ChatTopic implements TopicInterface
         $user = $this->clientManipulator->getClient($connection);
         //$user = $this->clientStorage->getClient($connection->WAMP->clientStorageId);
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' =>  "User " . $user . " has joined to chat"]);
+        $topic->broadcast(['msg' =>  "User " . $user . " has connected to chat"]);
     }
 
     public function onUnSubscribe(ConnectionInterface $connection, Topic $topic, WampRequest $request)
     {
         $user = $this->clientManipulator->getClient($connection);
         //this will broadcast the message to ALL subscribers of this topic.
-        $topic->broadcast(['msg' => "User " . $user . " has left the chat"]);
+        $topic->broadcast(['msg' => "User " . $user . " has disconnected the chat"]);
     }
 
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
