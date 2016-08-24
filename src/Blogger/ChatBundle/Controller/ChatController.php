@@ -6,6 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Blogger\ChatBundle\Entity\Chat;
 use Blogger\ChatBundle\Form\ChatType;
 
@@ -71,12 +72,22 @@ class ChatController extends Controller
      */
     public function showAction(Chat $chat)
     {
-        $messages = $chat->getMessages();
+        $securityContext = $this->container->get('security.context');
 
-        return $this->render('chat/show.html.twig', array(
-            'chat' => $chat,
-            'messages' => $messages,
-        ));
+        if($securityContext->isGranted('ROLE_USER')){
+            $em = $this->getDoctrine()->getManager();
+            $repo = $em->getRepository('BloggerChatBundle:ChatMessage');
+            $messages = $repo->findBy( 
+                array('chat' => $chat->getId()),
+                array('time' => 'DESC')
+            );
+
+            return $this->render('chat/show.html.twig', array(
+                'chat' => $chat,
+                'messages' => $messages,
+            ));
+        }
+        throw new AccessDeniedException();
     }
 
     /**

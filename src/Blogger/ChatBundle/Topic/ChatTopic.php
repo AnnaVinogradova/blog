@@ -10,6 +10,7 @@ use Gos\Bundle\WebSocketBundle\Client\ClientStorageInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Wamp\Topic;
 use Gos\Bundle\WebSocketBundle\Router\WampRequest;
+use Blogger\ChatBundle\Entity\ChatMessage;
 
 class ChatTopic implements TopicInterface
 {
@@ -43,7 +44,22 @@ class ChatTopic implements TopicInterface
 
     public function onPublish(ConnectionInterface $connection, Topic $topic, WampRequest $request, $event, array $exclude, array $eligible)
     {     
-        $user = $this->clientManipulator->getClient($connection);   
+        $resource = $topic->getId();
+        $pos = strrpos($resource, '/', -1);
+        $id = substr($resource, $pos+1);
+
+        $user = $this->clientManipulator->getClient($connection) . "";
+        $obj_user = $this->em->getRepository('BloggerBlogBundle:User')->findOneBy(array("username" => $user));
+        $chat = $this->em->getRepository('BloggerChatBundle:Chat')->findOneById($id);
+
+        $message = new ChatMessage();
+        $message->setContent($event);
+        $message->setUser($obj_user);
+        $message->setChat($chat);
+        $message->setTime(new \DateTime());
+        $this->em->persist($message);
+        $this->em->flush();
+  
         $topic->broadcast([
             'msg' => $event,
             'user' => $user . ""

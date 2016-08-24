@@ -112,8 +112,21 @@ class ChatMessage
         return $this;
     }
 
-    public function getUser(){
+    public function getUser()
+    {
         return $this->user;
+    }
+
+    public function setChat($chat)
+    {
+        $this->chat = $chat;
+
+        return $this;
+    }
+
+    public function getChat()
+    {
+        return $this->chat;
     }
 }
 
