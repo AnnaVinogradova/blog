@@ -104,5 +104,16 @@ class ChatMessage
     {
         return $this->time;
     }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUser(){
+        return $this->user;
+    }
 }
 

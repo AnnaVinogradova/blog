@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>{{chat.name}}</h3>
+
+    <div id="content">
+        <ul>
+            <li>
+                <a href="{{ path('chat_index') }}">Back to the list</a>
+            </li>
+        </ul>
+        <div class="row">
+            <form class="col-md-5 col-md-offset-2" name="chat_form" action="">
+                <textarea rows="5" cols="40" name="message"></textarea>
+                <input name="send_number" value="Send" type="submit">
+            </form>
+        </div>
+        <ul id="chat">
+            {% for message in messages %}    
+                <li>
+                    <h4>{{message.user}}</h4>
+                    {{ message.content }} 
+                </li>   
+            {% endfor %}  
+        </ul>     
+    </div>
+
+<script src="{{ asset('bundles/goswebsocket/js/gos_web_socket_client.js') }}"></script>
+<script src="{{ asset('bundles/goswebsocket/js/vendor/autobahn.min.js') }}"></script>
+<script>
+    var list = document.getElementById('chat');
+
+    var _WS_URI = "ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}";
+    var webSocket = WS.connect(_WS_URI);
+
+    webSocket.on("socket/connect", function(session){
+        console.log('Start web socket');
+        session.subscribe("app/chat/{{ chat.id }}", function(uri, payload){
+            li = document.createElement("li");
+            if(payload.user != undefined){
+                h4 = document.createElement("h4");
+                h4.appendChild(document.createTextNode(payload.user));
+                li.appendChild(h4);
+            }
+
+            li.appendChild(document.createTextNode(payload.msg));
+            list.insertBefore(li, list.firstChild);
+        });
+
+        document.chat_form.addEventListener("submit", function(e){    
+            message = document.chat_form.message.value;
+            session.publish("app/chat/{{ chat.id }}", message);
+            document.chat_form.message.value = '';
+            e.preventDefault();
+        });
+    });
+</script>
+{% endblock %}

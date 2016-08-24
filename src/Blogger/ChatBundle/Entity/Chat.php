@@ -72,5 +72,26 @@ class Chat
     {
         return $this->name;
     }
+
+    public function setUser($user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getUser(){
+        return $this->user;
+    }
+
+    /**
+     * Get messages
+     *
+     * @return Doctrine\Common\Collections\Collection 
+     */
+    public function getMessages()
+    {
+        return $this->messages;
+    }
 }
 

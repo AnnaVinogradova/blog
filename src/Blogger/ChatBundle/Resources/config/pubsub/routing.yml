@@ -1,0 +1,7 @@
+blogger_blog_topic_game:
+    channel: app/chat/{room}
+    handler:
+        callback: 'topic.chat' #Относится к getName, а не к имени сервиса
+    requirements:
+        room:
+            pattern: "\d+"

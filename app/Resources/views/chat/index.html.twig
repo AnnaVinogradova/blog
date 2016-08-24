@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h3>Opened chats</h3>
+
+    <div id="content">
+        <ul>
+            <li>
+                <a href="{{ path('chat_new') }}">Create a new chat</a>
+            </li>
+        </ul>
+        <ul>
+            {% for chat in chats %}
+                <ul>
+                    <li>
+                        <h4><a href="{{ path('chat_show', { 'id': chat.id }) }}">{{ chat.name }}</a> ({{ chat.user }})</h4>
+                        <a href="{{ path('chat_edit', { 'id': chat.id }) }}">Manage</a>
+                    </li>
+                </ul>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

@@ -86,6 +86,7 @@ gos_web_socket:
         router:
             resources:
                 - '@BloggerBlogBundle/Resources/config/pubsub/routing.yml'
+                - '@BloggerChatBundle/Resources/config/pubsub/routing.yml'
     client:
         firewall: main
         session_handler: @session.handler.pdo
