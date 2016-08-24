@@ -28,6 +28,11 @@
 <script src="{{ asset('bundles/goswebsocket/js/gos_web_socket_client.js') }}"></script>
 <script src="{{ asset('bundles/goswebsocket/js/vendor/autobahn.min.js') }}"></script>
 <script>
+
+String.prototype.trim = function() {
+    return this.replace(/^\s+/, '').replace(/\s+$/, '');
+  }
+
     var list = document.getElementById('chat');
 
     var _WS_URI = "ws://{{ gos_web_socket_server_host }}:{{ gos_web_socket_server_port }}";
@@ -48,8 +53,10 @@
         });
 
         document.chat_form.addEventListener("submit", function(e){    
-            message = document.chat_form.message.value;
-            session.publish("app/chat/{{ chat.id }}", message);
+            message = document.chat_form.message.value.trim();
+            if(!message == ''){
+                session.publish("app/chat/{{ chat.id }}", message);
+            }
             document.chat_form.message.value = '';
             e.preventDefault();
         });

@@ -66,7 +66,7 @@ class ChatTopic implements TopicInterface
       
             $topic->broadcast([
                 'msg' => $event,
-                'user' => $user . ""
+                'user' => $user 
             ]);
         }
 
